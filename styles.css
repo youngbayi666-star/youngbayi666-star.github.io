@@ -13,6 +13,11 @@
   --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   --shadow: 0 28px 90px rgba(27, 42, 66, 0.12);
   --radius: 22px;
+  --content-max: 1180px;
+  --hero-title-max: 7.2rem;
+  --section-title-max: 5.2rem;
+  --mobile-title-max: 3.6rem;
+  --mobile-book-columns: 2;
 }
 
 *,
@@ -233,9 +238,9 @@ ul {
 }
 
 .section {
-  width: min(1220px, calc(100% - 104px));
+  width: min(var(--content-max), calc(100% - 104px));
   margin: 0 auto;
-  padding: clamp(92px, 11vw, 164px) 0;
+  padding: clamp(88px, 9vw, 132px) 0;
 }
 
 .eyebrow {
@@ -267,7 +272,7 @@ ul {
   max-width: 920px;
   margin-bottom: 0;
   font-family: var(--display);
-  font-size: clamp(3rem, 6.4vw, 6.5rem);
+  font-size: clamp(3rem, 5.4vw, var(--section-title-max));
   font-weight: 900;
   line-height: 0.98;
   letter-spacing: -0.065em;
@@ -308,7 +313,7 @@ ul {
 .hero h1 {
   margin-bottom: 30px;
   font-family: var(--display);
-  font-size: clamp(4.5rem, 9vw, 9.2rem);
+  font-size: clamp(4.2rem, 8vw, var(--hero-title-max));
   font-weight: 900;
   line-height: 0.82;
   letter-spacing: -0.085em;
@@ -364,10 +369,16 @@ ul {
   place-items: end center;
 }
 
+.hero__portrait-wrap picture {
+  height: 100%;
+  display: grid;
+  place-items: end center;
+}
+
 .hero__portrait {
   position: relative;
   z-index: 3;
-  width: min(570px, 46vw);
+  width: min(480px, 39vw);
   max-height: 90%;
   object-fit: contain;
   object-position: bottom center;
@@ -533,7 +544,7 @@ ul {
 }
 
 .education-card {
-  min-height: 520px;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -545,7 +556,7 @@ ul {
 }
 
 .education-card--cuhk {
-  margin-top: 68px;
+  margin-top: 0;
 }
 
 .education-card__top {
@@ -553,7 +564,7 @@ ul {
   align-items: center;
   justify-content: space-between;
   min-height: 80px;
-  margin-bottom: auto;
+  margin-bottom: 44px;
 }
 
 .education-card__top img {
@@ -691,7 +702,7 @@ ul {
   grid-template-columns: 150px minmax(230px, 0.7fr) minmax(0, 1fr);
   gap: clamp(20px, 4vw, 56px);
   align-items: center;
-  min-height: 390px;
+  min-height: 320px;
   border-top: 1px solid var(--line);
 }
 
@@ -716,7 +727,7 @@ ul {
 }
 
 .work-chapter__logo {
-  min-height: 240px;
+  min-height: 190px;
   display: grid;
   place-items: center;
   border-radius: var(--radius);
@@ -894,7 +905,7 @@ ul {
 .travel-map {
   display: block;
   width: 100%;
-  min-width: 900px;
+  min-width: 760px;
   height: auto;
   color: var(--forward-blue);
 }
@@ -1254,7 +1265,7 @@ ul {
   }
 
   .section {
-    width: min(100% - 64px, 1120px);
+    width: min(100% - 64px, var(--content-max));
   }
 
   .hero {
@@ -1383,7 +1394,7 @@ ul {
 
   .section {
     width: min(100% - 36px, 720px);
-    padding: 86px 0;
+    padding: 72px 0;
   }
 
   .section-heading {
@@ -1393,7 +1404,7 @@ ul {
   }
 
   .section-heading h2 {
-    font-size: clamp(2.6rem, 12vw, 5.2rem);
+    font-size: clamp(2.5rem, 10vw, var(--mobile-title-max));
   }
 
   .hero {
@@ -1412,7 +1423,7 @@ ul {
   .hero h1 {
     max-width: 100%;
     margin-bottom: 24px;
-    font-size: clamp(3.6rem, 18vw, 6.5rem);
+    font-size: clamp(3rem, 14vw, 4.6rem);
     line-height: 0.88;
   }
 
@@ -1426,8 +1437,8 @@ ul {
   }
 
   .hero__portrait-wrap {
-    height: 520px;
-    margin-top: -40px;
+    height: 420px;
+    margin-top: -20px;
   }
 
   .hero__portrait {
@@ -1504,7 +1515,7 @@ ul {
 
   .education-card,
   .education-card--cuhk {
-    min-height: 470px;
+    min-height: 0;
     margin-top: 0;
   }
 
@@ -1562,7 +1573,7 @@ ul {
   }
 
   .travel-map {
-    width: 900px;
+    width: 760px;
   }
 
   .city-index {
@@ -1615,11 +1626,11 @@ ul {
   }
 
   .hero h1 {
-    font-size: clamp(3.35rem, 19vw, 5.1rem);
+    font-size: clamp(2.9rem, 14vw, 4rem);
   }
 
   .hero__portrait-wrap {
-    height: 470px;
+    height: 390px;
   }
 
   .hero__status dd {
@@ -1628,7 +1639,6 @@ ul {
 
   .campus-index,
   .achievement-wall,
-  .bookshelf,
   .now-board {
     grid-template-columns: 1fr;
   }
@@ -1648,7 +1658,7 @@ ul {
   }
 
   .bookshelf {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(var(--mobile-book-columns), minmax(0, 1fr));
     gap: 34px 14px;
   }
 

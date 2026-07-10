@@ -60,7 +60,13 @@
         <div class="hero__portrait-wrap" aria-hidden="true">
           <span class="hero__orbit hero__orbit--one"></span>
           <span class="hero__orbit hero__orbit--two"></span>
-          <img class="hero__portrait" src="assets/portrait/portrait-cutout.png" alt="">
+          <picture>
+            <source
+              type="image/webp"
+              srcset="assets/portrait/portrait-480.webp 480w, assets/portrait/portrait-800.webp 800w, assets/portrait/portrait-1200.webp 1200w"
+              sizes="(max-width: 520px) 88vw, (max-width: 768px) 430px, 42vw">
+            <img class="hero__portrait" src="assets/portrait/portrait-800.webp" width="800" height="1200" decoding="async" fetchpriority="high" alt="">
+          </picture>
           <span class="hero__portrait-label">JY / 01</span>
         </div>
 
@@ -109,7 +115,7 @@
         <div class="education-route" aria-label="教育经历路线">
           <article class="education-card education-card--hnu">
             <div class="education-card__top">
-              <img src="assets/logos/logo-hnu.png" alt="湖南大学校徽">
+              <img src="assets/logos/logo-hnu.webp" width="240" height="230" loading="lazy" decoding="async" alt="湖南大学校徽">
               <time>2022.09—2026.06</time>
             </div>
             <p class="route-city">CHANGSHA · 28.23°N</p>
@@ -128,7 +134,7 @@
 
           <article class="education-card education-card--cuhk">
             <div class="education-card__top">
-              <img src="assets/logos/logo-cuhksz.png" alt="香港中文大学（深圳）校徽">
+              <img src="assets/logos/logo-cuhksz.webp" width="240" height="190" loading="lazy" decoding="async" alt="香港中文大学（深圳）校徽">
               <time>2026.09—2028.06</time>
             </div>
             <p class="route-city">SHENZHEN · 22.54°N</p>
@@ -161,7 +167,7 @@
         <div class="work-timeline">
           <article class="work-chapter">
             <div class="work-chapter__meta"><time>2024.07—2024.10</time><span>01</span></div>
-            <div class="work-chapter__logo"><img src="assets/logos/logo-pku-institute.png" alt="北京大学长沙计算与数字经济研究院标识"></div>
+            <div class="work-chapter__logo"><img src="assets/logos/logo-pku-institute.webp" width="460" height="84" loading="lazy" decoding="async" alt="北京大学长沙计算与数字经济研究院标识"></div>
             <div class="work-chapter__copy">
               <p class="eyebrow">AI DATA DEVELOPMENT</p>
               <h3>北京大学长沙计算与数字经济研究院</h3>
@@ -172,7 +178,7 @@
 
           <article class="work-chapter work-chapter--reverse">
             <div class="work-chapter__meta"><time>2025.10—2026.04</time><span>02</span></div>
-            <div class="work-chapter__logo"><img src="assets/logos/logo-bytedance.png" alt="字节跳动标识"></div>
+            <div class="work-chapter__logo"><img src="assets/logos/logo-bytedance.webp" width="360" height="177" loading="lazy" decoding="async" alt="字节跳动标识"></div>
             <div class="work-chapter__copy">
               <p class="eyebrow">USER PRODUCT ANALYTICS</p>
               <h3>字节跳动 · 抖音电商用户产品</h3>
@@ -292,14 +298,14 @@
         <p class="reading__lede">Reading shapes how I build. 从技术工具到经济系统，从人类行为到个人生命，书页之间也有一条向前的路。</p>
 
         <div class="bookshelf">
-          <article class="book"><img src="assets/books/python-machine-learning.jpg" alt="《Python机器学习基础教程》封面"><h3>Python机器学习基础教程</h3><p>Andreas C. Müller · Sarah Guido</p><span>TECHNOLOGY</span></article>
-          <article class="book"><img src="assets/books/r-in-action.jpg" alt="《R语言实战》封面"><h3>R语言实战</h3><p>Robert I. Kabacoff</p><span>DATA</span></article>
-          <article class="book"><img src="assets/books/embedded-in-china.jpg" alt="《置身事内》封面"><h3>置身事内</h3><p>兰小欢</p><span>ECONOMY</span></article>
-          <article class="book"><img src="assets/books/money-game.jpg" alt="《金钱博弈》封面"><h3>金钱博弈</h3><p>单伟建</p><span>FINANCE</span></article>
-          <article class="book"><img src="assets/books/influence.jpg" alt="《影响力》封面"><h3>影响力</h3><p>罗伯特·西奥迪尼</p><span>PSYCHOLOGY</span></article>
-          <article class="book"><img src="assets/books/evolutionary-psychology.jpg" alt="《进化心理学》封面"><h3>进化心理学</h3><p>戴维·巴斯</p><span>HUMAN</span></article>
-          <article class="book"><img src="assets/books/the-world-i-see.jpg" alt="《我看见的世界》封面"><h3>我看见的世界</h3><p>李飞飞</p><span>LIFE & AI</span></article>
-          <article class="book"><img src="assets/books/life-is-a-sea.jpg" alt="《人生海海》封面"><h3>人生海海</h3><p>麦家</p><span>LITERATURE</span></article>
+          <article class="book"><img src="assets/books/python-machine-learning.jpg" width="70" height="100" loading="lazy" decoding="async" alt="《Python机器学习基础教程》封面"><h3>Python机器学习基础教程</h3><p>Andreas C. Müller · Sarah Guido</p><span>TECHNOLOGY</span></article>
+          <article class="book"><img src="assets/books/r-in-action.jpg" width="70" height="101" loading="lazy" decoding="async" alt="《R语言实战》封面"><h3>R语言实战</h3><p>Robert I. Kabacoff</p><span>DATA</span></article>
+          <article class="book"><img src="assets/books/embedded-in-china.jpg" width="70" height="101" loading="lazy" decoding="async" alt="《置身事内》封面"><h3>置身事内</h3><p>兰小欢</p><span>ECONOMY</span></article>
+          <article class="book"><img src="assets/books/money-game.jpg" width="70" height="101" loading="lazy" decoding="async" alt="《金钱博弈》封面"><h3>金钱博弈</h3><p>单伟建</p><span>FINANCE</span></article>
+          <article class="book"><img src="assets/books/influence.jpg" width="70" height="101" loading="lazy" decoding="async" alt="《影响力》封面"><h3>影响力</h3><p>罗伯特·西奥迪尼</p><span>PSYCHOLOGY</span></article>
+          <article class="book"><img src="assets/books/evolutionary-psychology.jpg" width="250" height="360" loading="lazy" decoding="async" alt="《进化心理学》封面"><h3>进化心理学</h3><p>戴维·巴斯</p><span>HUMAN</span></article>
+          <article class="book"><img src="assets/books/the-world-i-see.jpg" width="250" height="360" loading="lazy" decoding="async" alt="《我看见的世界》封面"><h3>我看见的世界</h3><p>李飞飞</p><span>LIFE & AI</span></article>
+          <article class="book"><img src="assets/books/life-is-a-sea.jpg" width="250" height="360" loading="lazy" decoding="async" alt="《人生海海》封面"><h3>人生海海</h3><p>麦家</p><span>LITERATURE</span></article>
         </div>
       </section>
 

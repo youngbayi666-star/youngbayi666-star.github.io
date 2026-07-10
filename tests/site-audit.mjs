@@ -77,17 +77,31 @@ for (const asset of referencedRasterAssets) {
   expect(fs.statSync(absolute).size <= 300 * 1024, `referenced image exceeds 300KB: ${asset}`);
 }
 
+const bookCards = [...html.matchAll(/<article class=["']book["']>([\s\S]*?)<\/article>/gi)].map(([, card]) => card);
+expect(bookCards.length === 8, "reading shelf must contain exactly eight book cards");
+for (const card of bookCards) {
+  const image = card.match(/<img\b[^>]*>/i)?.[0];
+  if (image) {
+    const width = Number(image.match(/\bwidth=["'](\d+)["']/i)?.[1] ?? 0);
+    expect(width >= 200, `book cover is too small to render as artwork: ${image.match(/src=["']([^"']+)/i)?.[1] ?? "unknown"}`);
+  } else {
+    expect(/class=["'][^"']*book-cover/.test(card), "book without a raster cover needs a typographic cover");
+  }
+}
+
 const assetManifest = [
   "assets/portrait/portrait-cutout.png",
+  "assets/portrait/portrait-480.webp",
+  "assets/portrait/portrait-800.webp",
+  "assets/portrait/portrait-1200.webp",
   "assets/logos/logo-hnu.png",
+  "assets/logos/logo-hnu.webp",
   "assets/logos/logo-cuhksz.png",
+  "assets/logos/logo-cuhksz.webp",
   "assets/logos/logo-pku-institute.png",
+  "assets/logos/logo-pku-institute.webp",
   "assets/logos/logo-bytedance.png",
-  "assets/books/python-machine-learning.jpg",
-  "assets/books/r-in-action.jpg",
-  "assets/books/embedded-in-china.jpg",
-  "assets/books/money-game.jpg",
-  "assets/books/influence.jpg",
+  "assets/logos/logo-bytedance.webp",
   "assets/books/evolutionary-psychology.jpg",
   "assets/books/the-world-i-see.jpg",
   "assets/books/life-is-a-sea.jpg",

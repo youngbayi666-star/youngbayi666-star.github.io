@@ -1058,17 +1058,70 @@ ul {
   min-width: 0;
 }
 
-.book img {
+.book img,
+.book-cover {
   width: 100%;
   aspect-ratio: 0.72;
+  overflow: hidden;
   border-radius: 6px 14px 14px 6px;
-  object-fit: cover;
-  filter: grayscale(1) saturate(0.2) contrast(0.92);
   box-shadow: 12px 18px 40px rgba(26, 37, 54, 0.16);
   transition: filter 240ms ease, transform 240ms ease, box-shadow 240ms ease;
 }
 
-.book:hover img {
+.book img {
+  object-fit: cover;
+  filter: grayscale(1) saturate(0.2) contrast(0.92);
+}
+
+.book-cover {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid rgba(16, 19, 24, 0.14);
+  padding: clamp(18px, 2.2vw, 30px);
+  color: var(--ink);
+}
+
+.book-cover::after {
+  position: absolute;
+  right: 12%;
+  bottom: 18%;
+  width: 42%;
+  aspect-ratio: 1;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  content: "";
+  opacity: 0.2;
+}
+
+.book-cover small,
+.book-cover i {
+  position: relative;
+  z-index: 1;
+  font-family: var(--mono);
+  font-size: clamp(0.52rem, 0.7vw, 0.68rem);
+  font-style: normal;
+  letter-spacing: 0.04em;
+}
+
+.book-cover strong {
+  position: relative;
+  z-index: 1;
+  font-family: var(--display);
+  font-size: clamp(1.55rem, 2.6vw, 2.75rem);
+  line-height: 0.98;
+  letter-spacing: -0.06em;
+}
+
+.book-cover--blue { background: #DCE8FF; color: #174FCE; }
+.book-cover--ink { background: var(--ink); color: var(--white); }
+.book-cover--mist { background: #E7ECF2; }
+.book-cover--pink { background: #FFD9E7; color: #9B2452; }
+.book-cover--line { background: var(--white); color: var(--forward-blue); }
+
+.book:hover img,
+.book:hover .book-cover {
   filter: grayscale(0.15) saturate(0.75);
   box-shadow: 16px 24px 50px rgba(26, 37, 54, 0.22);
   transform: translateY(-8px) rotate(-1deg);

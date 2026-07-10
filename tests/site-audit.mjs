@@ -83,6 +83,13 @@ expect(/data-menu-toggle/.test(html), "missing mobile menu control");
 expect(/data-copy=["']youngbayia1129["']/.test(html), "missing WeChat copy control");
 expect(/<svg[^>]+aria-labelledby=/s.test(html), "travel map lacks accessible name");
 
+for (const token of ["#F3F6FA", "#101318", "#246BFD", "#FF4D8D", "#D8E1EC"]) {
+  expect(css.toUpperCase().includes(token), `missing color token ${token}`);
+}
+expect(/@media\s*\([^)]*max-width:\s*768px/.test(css), "missing tablet/mobile breakpoint");
+expect(/:focus-visible/.test(css), "missing visible keyboard focus");
+expect(/overflow-x:\s*(clip|hidden)/.test(css), "missing page overflow guard");
+
 if (failures.length) {
   console.error(failures.map((item) => `FAIL: ${item}`).join("\n"));
   process.exit(1);

@@ -45,6 +45,26 @@ for (const match of html.matchAll(/<img[^>]+src=["']([^"']+)["']/gi)) {
   expect(fs.existsSync(path.join(root, match[1])), `missing image: ${match[1]}`);
 }
 
+const assetManifest = [
+  "assets/portrait/portrait-cutout.png",
+  "assets/logos/logo-hnu.png",
+  "assets/logos/logo-cuhksz.png",
+  "assets/logos/logo-pku-institute.png",
+  "assets/logos/logo-bytedance.png",
+  "assets/books/python-machine-learning.jpg",
+  "assets/books/r-in-action.jpg",
+  "assets/books/embedded-in-china.jpg",
+  "assets/books/money-game.jpg",
+  "assets/books/influence.jpg",
+  "assets/books/evolutionary-psychology.jpg",
+  "assets/books/the-world-i-see.jpg",
+  "assets/books/life-is-a-sea.jpg",
+];
+
+for (const asset of assetManifest) {
+  expect(fs.existsSync(path.join(root, asset)), `missing manifest asset: ${asset}`);
+}
+
 if (failures.length) {
   console.error(failures.map((item) => `FAIL: ${item}`).join("\n"));
   process.exit(1);

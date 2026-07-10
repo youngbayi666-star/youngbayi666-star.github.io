@@ -45,6 +45,38 @@ for (const match of html.matchAll(/<img[^>]+src=["']([^"']+)["']/gi)) {
   expect(fs.existsSync(path.join(root, match[1])), `missing image: ${match[1]}`);
 }
 
+const imageTags = [...html.matchAll(/<img\b[^>]*>/gi)].map(([tag]) => tag);
+for (const tag of imageTags) {
+  const src = tag.match(/src=["']([^"']+)["']/i)?.[1] ?? "unknown";
+  expect(/\bwidth=["']\d+["']/i.test(tag), `missing intrinsic width: ${src}`);
+  expect(/\bheight=["']\d+["']/i.test(tag), `missing intrinsic height: ${src}`);
+  expect(/\bdecoding=["']async["']/i.test(tag), `missing async decoding: ${src}`);
+  if (!/hero__portrait/.test(tag)) {
+    expect(/\bloading=["']lazy["']/i.test(tag), `missing lazy loading: ${src}`);
+  }
+}
+
+for (const portrait of [
+  "assets/portrait/portrait-480.webp",
+  "assets/portrait/portrait-800.webp",
+  "assets/portrait/portrait-1200.webp",
+]) {
+  expect(html.includes(portrait), `missing responsive portrait source: ${portrait}`);
+  expect(fs.existsSync(path.join(root, portrait)), `missing responsive portrait asset: ${portrait}`);
+}
+
+const referencedRasterAssets = new Set(
+  [...html.matchAll(/(?:src|srcset)=["']([^"']+)["']/gi)]
+    .flatMap(([, value]) => value.split(","))
+    .map((candidate) => candidate.trim().split(/\s+/)[0])
+    .filter((candidate) => /\.(?:png|jpe?g|webp)$/i.test(candidate)),
+);
+for (const asset of referencedRasterAssets) {
+  const absolute = path.join(root, asset);
+  if (!fs.existsSync(absolute)) continue;
+  expect(fs.statSync(absolute).size <= 300 * 1024, `referenced image exceeds 300KB: ${asset}`);
+}
+
 const assetManifest = [
   "assets/portrait/portrait-cutout.png",
   "assets/logos/logo-hnu.png",

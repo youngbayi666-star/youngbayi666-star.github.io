@@ -97,6 +97,16 @@ expect(/navigator\.clipboard/.test(js), "missing clipboard enhancement");
 expect(/querySelectorAll\(["']\[data-map-node\]["']\)/.test(js), "missing map focus enhancement");
 expect((html.match(/data-map-node/g) ?? []).length === 28, "travel map must contain 28 nodes");
 
+for (const [name, pattern] of [
+  ["description", /<meta[^>]+name=["']description["']/i],
+  ["og:title", /<meta[^>]+property=["']og:title["']/i],
+  ["og:description", /<meta[^>]+property=["']og:description["']/i],
+  ["favicon", /<link[^>]+rel=["']icon["']/i],
+]) {
+  expect(pattern.test(html), `missing metadata: ${name}`);
+}
+expect(fs.existsSync(path.join(root, "assets/icons/favicon.svg")), "missing favicon asset");
+
 if (failures.length) {
   console.error(failures.map((item) => `FAIL: ${item}`).join("\n"));
   process.exit(1);

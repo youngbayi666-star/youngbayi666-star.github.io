@@ -1,36 +1,48 @@
-# 杨俊逸个人主页
+# 杨俊逸 · Living Index
 
-这是一个 GitHub Pages 静态个人主页，当前设计方向是：
-
-- 商科 + AI 复合背景
-- 作品集式个人品牌，而不是简历搬运
-- 大标题首屏、身份卡、实习地图、黑底项目区、能力系统
+一个零构建、可直接部署到 GitHub Pages 的个人品牌主页。内容包括关于、教育、工作、成果、旅行地图、阅读侧写、此刻与联系方式。
 
 ## 本地预览
 
 ```powershell
 cd E:\Agent\Codex\context\personal-site
-python -m http.server 8000
+python -m http.server 8000 --bind 127.0.0.1
 ```
 
-然后打开：
+打开：
 
 ```text
 http://127.0.0.1:8000/
 ```
 
-## 后续最值得补充的素材
+保存 `index.html`、`styles.css` 或 `script.js` 后刷新浏览器即可查看变化。
 
-1. 3-5 个项目截图、Demo 视频封面或项目链接。
-2. GitHub、LinkedIn、公众号、作品集等公开链接。
-3. 一句你最想被别人记住的个人定位。
-4. 每段经历中你最想展开讲的 1-2 个案例。
-5. 如需进一步精修首屏，可以继续提供更正式或更生活化的人像版本。
+## 内容维护
 
-## 发布到 GitHub Pages
+- 页面文案与板块：编辑 `index.html`。
+- 配色、排版与响应式布局：编辑 `styles.css`。
+- 导航、微信复制与滚动索引：编辑 `script.js`。
+- 旅行地点：编辑 `#travel` 中的 SVG 节点和 `.city-index`。
+- 精选书目：编辑 `#reading` 中的 `.book`，并将封面保存到 `assets/books/`。
+- 机构标识：保存到 `assets/logos/`，不要使用远程图片热链。
+- 当前状态：编辑 `#now` 并同步更新月份。
 
-1. 在 GitHub 新建仓库。如果想使用 `https://你的用户名.github.io`，仓库名设为 `你的用户名.github.io`。
-2. 提交并推送本文件夹内容。
-3. 打开仓库 `Settings` -> `Pages`。
-4. `Build and deployment` 选择 `Deploy from a branch`。
-5. 分支选择 `main`，目录选择 `/root`。
+## 自动检查
+
+```powershell
+node tests/site-audit.mjs
+```
+
+检查内容包括：
+
+- 必需板块与公开联系方式；
+- 28 个旅行地图节点；
+- 本地图片资源完整性；
+- 统一色彩变量与响应式规则；
+- 键盘焦点和减少动画支持；
+- 导航、复制与滚动索引脚本；
+- 页面描述、Open Graph 和 favicon。
+
+## 发布
+
+仓库推送到 GitHub 后，在 `Settings → Pages` 中选择从目标分支的 `/root` 目录部署。正式地址确定后，再补充 canonical、`og:url` 和分享预览图。

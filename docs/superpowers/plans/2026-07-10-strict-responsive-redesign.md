@@ -80,4 +80,3 @@
 - [ ] If a visual defect appears, add the smallest failing audit first, implement the fix, and recapture the affected viewport.
 - [ ] Document image regeneration and visual QA commands in `README.md`.
 - [ ] Commit as `docs: record strict visual verification workflow`.
-

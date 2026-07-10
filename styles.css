@@ -17,6 +17,7 @@
   --hero-title-max: 7.2rem;
   --section-title-max: 5.2rem;
   --mobile-title-max: 3.6rem;
+  --mobile-contact-title-max: 2.7rem;
   --mobile-book-columns: 2;
 }
 
@@ -370,6 +371,8 @@ ul {
 }
 
 .hero__portrait-wrap picture {
+  position: absolute;
+  inset: 0;
   height: 100%;
   display: grid;
   place-items: end center;
@@ -378,8 +381,10 @@ ul {
 .hero__portrait {
   position: relative;
   z-index: 3;
-  width: min(480px, 39vw);
-  max-height: 90%;
+  width: auto;
+  height: 100%;
+  max-width: min(480px, 39vw);
+  max-height: 100%;
   object-fit: contain;
   object-position: bottom center;
   filter: drop-shadow(0 32px 30px rgba(25, 33, 47, 0.18));
@@ -742,6 +747,14 @@ ul {
   object-fit: contain;
   filter: grayscale(1) opacity(0.62);
   transition: filter 240ms ease, transform 240ms ease;
+}
+
+.work-chapter__logo--invert img {
+  filter: brightness(0) opacity(0.62);
+}
+
+.work-chapter:hover .work-chapter__logo--invert img {
+  filter: brightness(0) opacity(1);
 }
 
 .work-chapter:hover img {
@@ -1684,6 +1697,11 @@ ul {
 
   .hero__portrait-wrap {
     height: 390px;
+  }
+
+  .contact h2 {
+    font-size: clamp(2.2rem, 9.8vw, var(--mobile-contact-title-max));
+    line-height: 1.02;
   }
 
   .hero__status dd {

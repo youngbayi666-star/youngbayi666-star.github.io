@@ -139,11 +139,16 @@ expect(/--content-max:\s*1180px/.test(css), "missing strict 1180px content width
 expect(/--hero-title-max:\s*7\.2rem/.test(css), "missing controlled hero title scale");
 expect(/--section-title-max:\s*5\.2rem/.test(css), "missing controlled section title scale");
 expect(/--mobile-title-max:\s*3\.6rem/.test(css), "missing controlled mobile title scale");
+expect(/--mobile-contact-title-max:\s*2\.7rem/.test(css), "missing controlled mobile contact title scale");
 expect(/--mobile-book-columns:\s*2/.test(css), "missing explicit mobile bookshelf contract");
 expect(!/\.education-card\s*\{[^}]*min-height:\s*520px/s.test(css), "education cards still force 520px height");
 expect(!/@media\s*\([^)]*max-width:\s*768px[^}]*\}[\s\S]*?\.education-card[^}]*min-height:\s*470px/.test(css), "mobile education cards still force 470px height");
 expect(/\.travel-map\s*\{[^}]*min-width:\s*760px/s.test(css), "travel map lacks controlled mobile canvas width");
 expect(/\.hero__portrait-wrap\s+picture\s*\{[^}]*height:\s*100%[^}]*display:\s*grid/s.test(css), "portrait picture wrapper does not participate in the hero grid");
+expect(/\.hero__portrait-wrap\s+picture\s*\{[^}]*position:\s*absolute[^}]*inset:\s*0/s.test(css), "portrait picture wrapper is not bounded to the hero frame");
+expect(/class=["'][^"']*work-chapter__logo--invert/.test(html), "white PKU logo lacks an explicit contrast class");
+expect(/\.work-chapter__logo--invert\s+img\s*\{[^}]*filter:\s*brightness\(0\)/s.test(css), "white PKU logo lacks a dark display filter");
+expect(/\.work-chapter:hover\s+\.work-chapter__logo--invert\s+img\s*\{[^}]*brightness\(0\)/s.test(css), "PKU logo loses contrast on hover");
 
 const js = read("script.js");
 expect(/IntersectionObserver/.test(js), "missing section observer");

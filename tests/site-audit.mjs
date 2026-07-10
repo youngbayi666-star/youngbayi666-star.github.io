@@ -90,6 +90,13 @@ expect(/@media\s*\([^)]*max-width:\s*768px/.test(css), "missing tablet/mobile br
 expect(/:focus-visible/.test(css), "missing visible keyboard focus");
 expect(/overflow-x:\s*(clip|hidden)/.test(css), "missing page overflow guard");
 
+const js = read("script.js");
+expect(/IntersectionObserver/.test(js), "missing section observer");
+expect(/Escape/.test(js), "missing Escape menu handling");
+expect(/navigator\.clipboard/.test(js), "missing clipboard enhancement");
+expect(/querySelectorAll\(["']\[data-map-node\]["']\)/.test(js), "missing map focus enhancement");
+expect((html.match(/data-map-node/g) ?? []).length === 28, "travel map must contain 28 nodes");
+
 if (failures.length) {
   console.error(failures.map((item) => `FAIL: ${item}`).join("\n"));
   process.exit(1);

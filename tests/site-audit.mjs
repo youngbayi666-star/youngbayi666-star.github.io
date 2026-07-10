@@ -65,6 +65,24 @@ for (const asset of assetManifest) {
   expect(fs.existsSync(path.join(root, asset)), `missing manifest asset: ${asset}`);
 }
 
+for (const content of [
+  "我在鄱阳湖边的一座小镇长大",
+  "湖南大学",
+  "香港中文大学（深圳）",
+  "北京大学长沙计算与数字经济研究院",
+  "字节跳动",
+  "28 destinations",
+  "144 本",
+  "522 天",
+  "2434 条笔记",
+]) {
+  expect(html.includes(content), `missing approved copy: ${content}`);
+}
+
+expect(/data-menu-toggle/.test(html), "missing mobile menu control");
+expect(/data-copy=["']youngbayia1129["']/.test(html), "missing WeChat copy control");
+expect(/<svg[^>]+aria-labelledby=/s.test(html), "travel map lacks accessible name");
+
 if (failures.length) {
   console.error(failures.map((item) => `FAIL: ${item}`).join("\n"));
   process.exit(1);

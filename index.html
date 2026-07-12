@@ -10,6 +10,7 @@
     <meta property="og:type" content="website">
     <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/globe.gl@2.46.1/dist/globe.gl.min.js" defer></script>
     <script src="script.js" defer></script>
   </head>
   <body data-active-section="top">
@@ -225,58 +226,16 @@
             <span>China · Hong Kong · Macau · Indonesia</span>
           </div>
 
-          <div class="map-scroll" tabindex="0" aria-label="可横向浏览旅行地图">
-            <svg class="travel-map" viewBox="0 0 1000 650" role="img" aria-labelledby="map-title map-description">
-              <title id="map-title">俊逸的旅行目的地抽象地图</title>
-              <desc id="map-description">展示中国大陆、香港、澳门与印度尼西亚巴厘岛共二十八个目的地点。</desc>
-              <defs>
-                <pattern id="map-grid" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="currentColor" opacity=".18"></circle></pattern>
-              </defs>
-              <path class="map-land" d="M122 170 220 98 338 86 430 126 520 105 635 145 728 205 820 258 774 338 812 420 722 484 624 476 548 548 438 518 350 550 264 498 214 412 128 350 92 258Z"></path>
-              <path class="map-grid" d="M122 170 220 98 338 86 430 126 520 105 635 145 728 205 820 258 774 338 812 420 722 484 624 476 548 548 438 518 350 550 264 498 214 412 128 350 92 258Z"></path>
-              <path class="map-direction" d="M180 228 C330 160 490 235 620 330 S790 470 905 540"></path>
-
-              <g class="map-node" data-map-node tabindex="0" role="img" aria-label="北京" transform="translate(600 158)"><circle r="8"></circle><text y="-15">北京</text></g>
-              <g class="map-node" data-map-node tabindex="0" role="img" aria-label="西安" transform="translate(470 278)"><circle r="7"></circle><text y="-14">西安</text></g>
-              <g class="map-node" data-map-node tabindex="0" role="img" aria-label="上海" transform="translate(720 305)"><circle r="8"></circle><text x="12" y="4">上海</text></g>
-              <g class="map-node" data-map-node tabindex="0" role="img" aria-label="武汉" transform="translate(570 350)"><circle r="7"></circle><text y="-14">武汉</text></g>
-              <g class="map-node" data-map-node tabindex="0" role="img" aria-label="天门" transform="translate(545 365)"><circle r="5"></circle><text x="-38" y="20">天门</text></g>
-              <g class="map-node map-node--origin" data-map-node tabindex="0" role="img" aria-label="长沙" transform="translate(555 410)"><circle r="12"></circle><text y="-18">长沙</text></g>
-              <g class="map-node" data-map-node tabindex="0" role="img" aria-label="邵阳" transform="translate(525 432)"><circle r="5"></circle><text x="-34" y="18">邵阳</text></g>
-              <g class="map-node map-node--hollow" data-map-node tabindex="0" role="img" aria-label="张家界" transform="translate(520 388)"><circle r="7"></circle><text x="-48" y="-10">张家界</text></g>
-              <g class="map-node" data-map-node tabindex="0" role="img" aria-label="南昌" transform="translate(625 405)"><circle r="6"></circle><text y="-13">南昌</text></g>
-              <g class="map-node" data-map-node tabindex="0" role="img" aria-label="上饶" transform="translate(670 394)"><circle r="5"></circle><text x="10" y="4">上饶</text></g>
-              <g class="map-node" data-map-node tabindex="0" role="img" aria-label="景德镇" transform="translate(648 372)"><circle r="5"></circle><text x="10" y="-3">景德镇</text></g>
-              <g class="map-node map-node--hollow" data-map-node tabindex="0" role="img" aria-label="萍乡武功山" transform="translate(585 428)"><circle r="7"></circle><text x="10" y="18">武功山</text></g>
-              <g class="map-node" data-map-node tabindex="0" role="img" aria-label="杭州" transform="translate(700 338)"><circle r="7"></circle><text x="10" y="-6">杭州</text></g>
-              <g class="map-node map-node--hollow" data-map-node tabindex="0" role="img" aria-label="嘉兴乌镇" transform="translate(708 320)"><circle r="6"></circle><text x="10" y="-5">乌镇</text></g>
-              <g class="map-node" data-map-node tabindex="0" role="img" aria-label="广州" transform="translate(590 492)"><circle r="7"></circle><text x="-38" y="22">广州</text></g>
-              <g class="map-node map-node--origin" data-map-node tabindex="0" role="img" aria-label="深圳" transform="translate(628 505)"><circle r="12"></circle><text x="14" y="5">深圳</text></g>
-              <g class="map-node" data-map-node tabindex="0" role="img" aria-label="东莞" transform="translate(611 490)"><circle r="5"></circle><text x="8" y="-14">东莞</text></g>
-              <g class="map-node" data-map-node tabindex="0" role="img" aria-label="惠州" transform="translate(645 483)"><circle r="5"></circle><text x="10" y="-8">惠州</text></g>
-              <g class="map-node" data-map-node tabindex="0" role="img" aria-label="清远" transform="translate(585 465)"><circle r="5"></circle><text x="-36" y="-8">清远</text></g>
-              <g class="map-node" data-map-node tabindex="0" role="img" aria-label="昆明" transform="translate(370 480)"><circle r="7"></circle><text y="-14">昆明</text></g>
-              <g class="map-node map-node--hollow" data-map-node tabindex="0" role="img" aria-label="大理" transform="translate(330 465)"><circle r="6"></circle><text x="-30" y="-8">大理</text></g>
-              <g class="map-node map-node--hollow" data-map-node tabindex="0" role="img" aria-label="丽江" transform="translate(340 430)"><circle r="6"></circle><text x="-34" y="-8">丽江</text></g>
-              <g class="map-node map-node--hollow" data-map-node tabindex="0" role="img" aria-label="香格里拉" transform="translate(326 398)"><circle r="7"></circle><text x="-52" y="-10">香格里拉</text></g>
-              <g class="map-node" data-map-node tabindex="0" role="img" aria-label="海口" transform="translate(520 562)"><circle r="6"></circle><text y="-13">海口</text></g>
-              <g class="map-node" data-map-node tabindex="0" role="img" aria-label="三亚" transform="translate(525 600)"><circle r="6"></circle><text y="20">三亚</text></g>
-              <g class="map-node map-node--special" data-map-node tabindex="0" role="img" aria-label="香港" transform="translate(648 515)"><circle r="8"></circle><text x="12" y="18">香港</text></g>
-              <g class="map-node map-node--special" data-map-node tabindex="0" role="img" aria-label="澳门" transform="translate(626 526)"><circle r="7"></circle><text x="-40" y="20">澳门</text></g>
-              <g class="map-node map-node--overseas map-node--hollow" data-map-node tabindex="0" role="img" aria-label="印度尼西亚巴厘岛" transform="translate(905 560)"><circle r="11"></circle><text x="-22" y="28">BALI</text></g>
-            </svg>
+          <div class="globe-stage" aria-describedby="globe-description">
+            <div class="globe-orbit globe-orbit--outer" aria-hidden="true"></div>
+            <div class="globe-orbit globe-orbit--inner" aria-hidden="true"></div>
+            <div id="travel-globe" role="application" tabindex="0" aria-label="可旋转的旅行地球仪，点亮二十八个到访地点"></div>
+            <p class="globe-status" role="status">正在绘制走过的世界…</p>
           </div>
-
-          <ul class="city-index" aria-label="旅行城市文字索引">
-            <li><strong>江西</strong> 南昌 · 上饶 · 景德镇 · 萍乡武功山</li>
-            <li><strong>湖南</strong> 长沙 · 邵阳 · 张家界</li>
-            <li><strong>浙江</strong> 杭州 · 嘉兴乌镇</li>
-            <li><strong>广东</strong> 广州 · 深圳 · 东莞 · 惠州 · 清远</li>
-            <li><strong>湖北</strong> 武汉 · 天门</li>
-            <li><strong>其他</strong> 上海 · 北京 · 西安 · 海口 · 三亚</li>
-            <li><strong>云南</strong> 昆明 · 大理 · 丽江 · 香格里拉</li>
-            <li><strong>远方</strong> 香港 · 澳门 · 巴厘岛</li>
-          </ul>
+          <div class="globe-caption" id="globe-description">
+            <span>DRAG TO EXPLORE</span>
+            <p>拖动地球，看看我走过的地方。光点不是边界，只是下一段路的起点。</p>
+          </div>
         </div>
       </section>
 
@@ -298,14 +257,14 @@
         <p class="reading__lede">Reading shapes how I build. 从技术工具到经济系统，从人类行为到个人生命，书页之间也有一条向前的路。</p>
 
         <div class="bookshelf">
-          <article class="book"><div class="book-cover book-cover--blue" role="img" aria-label="《Python机器学习基础教程》编辑式封面"><small>01 / TECHNOLOGY</small><strong>Python<br>机器学习</strong><i>从数据到模型</i></div><h3>Python机器学习基础教程</h3><p>Andreas C. Müller · Sarah Guido</p><span>TECHNOLOGY</span></article>
-          <article class="book"><div class="book-cover book-cover--ink" role="img" aria-label="《R语言实战》编辑式封面"><small>02 / DATA</small><strong>R 语言<br>实战</strong><i>Code · Data · Insight</i></div><h3>R语言实战</h3><p>Robert I. Kabacoff</p><span>DATA</span></article>
-          <article class="book"><div class="book-cover book-cover--mist" role="img" aria-label="《置身事内》编辑式封面"><small>03 / ECONOMY</small><strong>置身<br>事内</strong><i>中国政府与经济发展</i></div><h3>置身事内</h3><p>兰小欢</p><span>ECONOMY</span></article>
-          <article class="book"><div class="book-cover book-cover--pink" role="img" aria-label="《金钱博弈》编辑式封面"><small>04 / FINANCE</small><strong>金钱<br>博弈</strong><i>商业世界的长期主义</i></div><h3>金钱博弈</h3><p>单伟建</p><span>FINANCE</span></article>
-          <article class="book"><div class="book-cover book-cover--line" role="img" aria-label="《影响力》编辑式封面"><small>05 / PSYCHOLOGY</small><strong>影响力</strong><i>理解选择如何发生</i></div><h3>影响力</h3><p>罗伯特·西奥迪尼</p><span>PSYCHOLOGY</span></article>
-          <article class="book"><img src="assets/books/evolutionary-psychology.jpg" width="250" height="360" loading="lazy" decoding="async" alt="《进化心理学》封面"><h3>进化心理学</h3><p>戴维·巴斯</p><span>HUMAN</span></article>
-          <article class="book"><img src="assets/books/the-world-i-see.jpg" width="250" height="360" loading="lazy" decoding="async" alt="《我看见的世界》封面"><h3>我看见的世界</h3><p>李飞飞</p><span>LIFE & AI</span></article>
-          <article class="book"><img src="assets/books/life-is-a-sea.jpg" width="250" height="360" loading="lazy" decoding="async" alt="《人生海海》封面"><h3>人生海海</h3><p>麦家</p><span>LITERATURE</span></article>
+          <article class="book"><div class="book__cover-frame"><span class="book__cover-fallback" aria-hidden="true">Python机器学习基础教程</span><img src="assets/books/python-machine-learning.jpg" width="250" height="360" loading="lazy" decoding="async" alt="《Python机器学习基础教程》封面"></div><h3>Python机器学习基础教程</h3><p>Andreas C. Müller · Sarah Guido</p><span>TECHNOLOGY</span></article>
+          <article class="book"><div class="book__cover-frame"><span class="book__cover-fallback" aria-hidden="true">R语言实战</span><img src="assets/books/r-in-action.jpg" width="250" height="360" loading="lazy" decoding="async" alt="《R语言实战》封面"></div><h3>R语言实战</h3><p>Robert I. Kabacoff</p><span>DATA</span></article>
+          <article class="book"><div class="book__cover-frame"><span class="book__cover-fallback" aria-hidden="true">置身事内</span><img src="assets/books/embedded-in-the-system.jpg" width="250" height="360" loading="lazy" decoding="async" alt="《置身事内》封面"></div><h3>置身事内</h3><p>兰小欢</p><span>ECONOMY</span></article>
+          <article class="book"><div class="book__cover-frame"><span class="book__cover-fallback" aria-hidden="true">金钱博弈</span><img src="assets/books/money-games.jpg" width="250" height="360" loading="lazy" decoding="async" alt="《金钱博弈》封面"></div><h3>金钱博弈</h3><p>单伟建</p><span>FINANCE</span></article>
+          <article class="book"><div class="book__cover-frame"><span class="book__cover-fallback" aria-hidden="true">影响力</span><img src="assets/books/influence.jpg" width="250" height="360" loading="lazy" decoding="async" alt="《影响力》封面"></div><h3>影响力</h3><p>罗伯特·西奥迪尼</p><span>PSYCHOLOGY</span></article>
+          <article class="book"><div class="book__cover-frame"><span class="book__cover-fallback" aria-hidden="true">进化心理学</span><img src="assets/books/evolutionary-psychology.jpg" width="250" height="360" loading="lazy" decoding="async" alt="《进化心理学》封面"></div><h3>进化心理学</h3><p>戴维·巴斯</p><span>HUMAN</span></article>
+          <article class="book"><div class="book__cover-frame"><span class="book__cover-fallback" aria-hidden="true">我看见的世界</span><img src="assets/books/the-world-i-see.jpg" width="250" height="360" loading="lazy" decoding="async" alt="《我看见的世界》封面"></div><h3>我看见的世界</h3><p>李飞飞</p><span>LIFE & AI</span></article>
+          <article class="book"><div class="book__cover-frame"><span class="book__cover-fallback" aria-hidden="true">人生海海</span><img src="assets/books/life-is-a-sea.jpg" width="250" height="360" loading="lazy" decoding="async" alt="《人生海海》封面"></div><h3>人生海海</h3><p>麦家</p><span>LITERATURE</span></article>
         </div>
       </section>
 

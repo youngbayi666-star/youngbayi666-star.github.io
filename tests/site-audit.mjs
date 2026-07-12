@@ -81,12 +81,13 @@ const bookCards = [...html.matchAll(/<article class=["']book["']>([\s\S]*?)<\/ar
 expect(bookCards.length === 8, "reading shelf must contain exactly eight book cards");
 for (const card of bookCards) {
   const image = card.match(/<img\b[^>]*>/i)?.[0];
-  if (image) {
-    const width = Number(image.match(/\bwidth=["'](\d+)["']/i)?.[1] ?? 0);
-    expect(width >= 200, `book cover is too small to render as artwork: ${image.match(/src=["']([^"']+)/i)?.[1] ?? "unknown"}`);
-  } else {
-    expect(/class=["'][^"']*book-cover/.test(card), "book without a raster cover needs a typographic cover");
-  }
+  expect(Boolean(image), "every book card must use a real raster cover");
+  if (!image) continue;
+  const src = image.match(/src=["']([^"']+)/i)?.[1] ?? "unknown";
+  const width = Number(image.match(/\bwidth=["'](\d+)["']/i)?.[1] ?? 0);
+  expect(src.startsWith("assets/books/"), `book cover must be a local book asset: ${src}`);
+  expect(width >= 200, `book cover is too small to render as artwork: ${src}`);
+  expect(/class=["'][^"']*book__cover-fallback/.test(card), `book cover lacks a text fallback: ${src}`);
 }
 
 const assetManifest = [
@@ -127,7 +128,11 @@ for (const content of [
 
 expect(/data-menu-toggle/.test(html), "missing mobile menu control");
 expect(/data-copy=["']youngbayia1129["']/.test(html), "missing WeChat copy control");
-expect(/<svg[^>]+aria-labelledby=/s.test(html), "travel map lacks accessible name");
+expect(/id=["']travel-globe["']/.test(html), "missing interactive travel globe mount");
+expect(/class=["'][^"']*globe-status/.test(html), "missing globe loading/fallback status");
+expect(/cdn\.jsdelivr\.net\/npm\/globe\.gl@/.test(html), "missing pinned Globe.gl CDN dependency");
+expect(!/class=["'][^"']*city-index/.test(html), "legacy travel city table still exists");
+expect(!/class=["'][^"']*(?:map-scroll|travel-map)/.test(html), "legacy static travel map still exists");
 
 for (const token of ["#F3F6FA", "#101318", "#246BFD", "#FF4D8D", "#D8E1EC"]) {
   expect(css.toUpperCase().includes(token), `missing color token ${token}`);
@@ -143,7 +148,7 @@ expect(/--mobile-contact-title-max:\s*2\.7rem/.test(css), "missing controlled mo
 expect(/--mobile-book-columns:\s*2/.test(css), "missing explicit mobile bookshelf contract");
 expect(!/\.education-card\s*\{[^}]*min-height:\s*520px/s.test(css), "education cards still force 520px height");
 expect(!/@media\s*\([^)]*max-width:\s*768px[^}]*\}[\s\S]*?\.education-card[^}]*min-height:\s*470px/.test(css), "mobile education cards still force 470px height");
-expect(/\.travel-map\s*\{[^}]*min-width:\s*760px/s.test(css), "travel map lacks controlled mobile canvas width");
+expect(/\.globe-stage\s*\{/.test(css), "missing globe stage styling");
 expect(/\.hero__portrait-wrap\s+picture\s*\{[^}]*height:\s*100%[^}]*display:\s*grid/s.test(css), "portrait picture wrapper does not participate in the hero grid");
 expect(/\.hero__portrait-wrap\s+picture\s*\{[^}]*position:\s*absolute[^}]*inset:\s*0/s.test(css), "portrait picture wrapper is not bounded to the hero frame");
 expect(/class=["'][^"']*work-chapter__logo--invert/.test(html), "white PKU logo lacks an explicit contrast class");
@@ -154,8 +159,10 @@ const js = read("script.js");
 expect(/IntersectionObserver/.test(js), "missing section observer");
 expect(/Escape/.test(js), "missing Escape menu handling");
 expect(/navigator\.clipboard/.test(js), "missing clipboard enhancement");
-expect(/querySelectorAll\(["']\[data-map-node\]["']\)/.test(js), "missing map focus enhancement");
-expect((html.match(/data-map-node/g) ?? []).length === 28, "travel map must contain 28 nodes");
+expect(/const\s+VISITED_PLACES\s*=/.test(js), "missing visited-place data");
+expect((js.match(/\bname:\s*["']/g) ?? []).length === 28, "travel globe must contain 28 place records");
+expect(/initTravelGlobe/.test(js), "missing globe initializer");
+expect(/prefers-reduced-motion:\s*reduce/.test(js), "globe does not respect reduced motion");
 
 for (const [name, pattern] of [
   ["description", /<meta[^>]+name=["']description["']/i],

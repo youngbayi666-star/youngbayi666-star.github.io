@@ -118,9 +118,9 @@ git commit -m "feat: replace travel index with interactive globe"
 ### Task 3: Browser and Visual Verification
 
 **Files:**
-- Create: `tests/visual-globe-check.py`
-- Create: `artifacts/travel-reading-desktop.png`
-- Create: `artifacts/travel-reading-mobile.png`
+- Create: `tests/visual-globe-check.cjs`
+- Generate locally: `artifacts/travel-reading-desktop.png`
+- Generate locally: `artifacts/travel-reading-mobile.png`
 
 **Interfaces:**
 - Consumes: local HTTP server at port 8000.
@@ -132,7 +132,7 @@ Open the local page, wait for network idle and `#travel-globe canvas`, assert 8 
 
 - [ ] **Step 2: Run the browser verification**
 
-Run the local static server and `python tests/visual-globe-check.py`.
+Run the local static server and `node tests/visual-globe-check.cjs` with the bundled Playwright module path.
 Expected: PASS with both screenshots written.
 
 - [ ] **Step 3: Inspect screenshots and remove one unnecessary decorative detail if visual density is excessive**
@@ -147,7 +147,7 @@ Expected: all commands exit 0 and browser console has no errors.
 - [ ] **Step 5: Commit**
 
 ```powershell
-git add tests/visual-globe-check.py artifacts
+git add tests/visual-globe-check.cjs .gitignore
 git commit -m "test: verify globe and reading layouts"
 ```
 

@@ -174,6 +174,9 @@ expect(/htmlElementsData\(VISITED_COUNTRIES\)/.test(js), "country labels must us
 expect(!/\.labelsData\(VISITED_COUNTRIES\)/.test(js), "country labels still use the WebGL font layer without CJK glyphs");
 expect(/initChinaMap/.test(js), "missing China map initializer");
 expect(/rewindGeoJson/.test(js), "China GeoJSON rings are not normalized for D3 spherical winding");
+expect(/fetch\(["']assets\/maps\/china-provinces\.json["']\)/.test(js), "China map must load same-origin GeoJSON");
+expect(!/geo\.datav\.aliyun\.com/.test(js), "China map still depends on DataV cross-origin delivery");
+expect(fs.existsSync(path.join(root, "assets/maps/china-provinces.json")), "missing local China province GeoJSON");
 expect(/prefers-reduced-motion:\s*reduce/.test(js), "globe does not respect reduced motion");
 
 for (const [name, pattern] of [

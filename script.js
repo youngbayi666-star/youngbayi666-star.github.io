@@ -227,7 +227,7 @@ const initChinaMap = async (svgElement) => {
   }
 
   try {
-    const response = await fetch("https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json");
+    const response = await fetch("assets/maps/china-provinces.json");
     if (!response.ok) throw new Error(`China GeoJSON ${response.status}`);
     const china = rewindGeoJson(await response.json());
     const d3 = window.d3;

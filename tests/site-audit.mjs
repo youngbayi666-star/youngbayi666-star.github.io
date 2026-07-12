@@ -37,6 +37,7 @@ for (const content of [
 }
 
 expect(fs.existsSync(scriptPath), "missing script.js");
+expect(/<script src=["']script\.js\?v=20260712-3["'] defer><\/script>/.test(html), "site script URL is not cache-versioned");
 expect(/prefers-reduced-motion/.test(css), "missing reduced motion support");
 expect(!/href=["']\s*["']/.test(html), "empty href found");
 expect(!/<img[^>]+src=["']https?:\/\//i.test(html), "remote image source found");
@@ -174,7 +175,7 @@ expect(/htmlElementsData\(VISITED_COUNTRIES\)/.test(js), "country labels must us
 expect(!/\.labelsData\(VISITED_COUNTRIES\)/.test(js), "country labels still use the WebGL font layer without CJK glyphs");
 expect(/initChinaMap/.test(js), "missing China map initializer");
 expect(/rewindGeoJson/.test(js), "China GeoJSON rings are not normalized for D3 spherical winding");
-expect(/fetch\(["']assets\/maps\/china-provinces\.json["']\)/.test(js), "China map must load same-origin GeoJSON");
+expect(/fetch\(["']assets\/maps\/china-provinces\.json\?v=1["']\)/.test(js), "China map must load versioned same-origin GeoJSON");
 expect(!/geo\.datav\.aliyun\.com/.test(js), "China map still depends on DataV cross-origin delivery");
 expect(fs.existsSync(path.join(root, "assets/maps/china-provinces.json")), "missing local China province GeoJSON");
 expect(/prefers-reduced-motion:\s*reduce/.test(js), "globe does not respect reduced motion");

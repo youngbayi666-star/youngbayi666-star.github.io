@@ -142,15 +142,17 @@ const initTravelGlobe = async (container) => {
         if (country !== "China" && country !== "Indonesia") return "";
         return `<div class="globe-tooltip"><strong>${country === "China" ? "中国" : "印度尼西亚"}</strong><span>${country.toUpperCase()}</span></div>`;
       })
-      .labelsData(VISITED_COUNTRIES)
-      .labelLat("lat")
-      .labelLng("lng")
-      .labelText("label")
-      .labelColor(() => "#FFF7E8")
-      .labelDotRadius(0.25)
-      .labelSize(1.1)
-      .labelAltitude(0.025)
-      .labelResolution(3);
+      .htmlElementsData(VISITED_COUNTRIES)
+      .htmlLat("lat")
+      .htmlLng("lng")
+      .htmlAltitude(0.025)
+      .htmlElement((place) => {
+        const label = document.createElement("div");
+        label.className = "globe-country-label";
+        const [chinese, english] = place.label.split(" / ");
+        label.innerHTML = `<strong>${chinese}</strong><span>${english}</span>`;
+        return label;
+      });
 
     world.globeMaterial().color.set("#187BB2");
     world.globeMaterial().emissive.set("#0E5A88");

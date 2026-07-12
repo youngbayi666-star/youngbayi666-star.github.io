@@ -30,6 +30,11 @@ async function verifyPage(page, screenshotName) {
   if (await page.locator(".city-index").count() !== 0) throw new Error("legacy city index remains");
   if (await page.locator("#china-map .china-destination").count() !== 27) throw new Error("China map does not contain 27 destinations");
   if (await page.locator("#travel-globe .scene-container").count() !== 1) throw new Error("country globe scene is missing");
+  if (await page.locator("#travel-globe .globe-country-label").count() !== 2) throw new Error("HTML country labels are missing");
+  const countryLabelText = await page.locator("#travel-globe .globe-country-label").allTextContents();
+  if (!countryLabelText.some((text) => text.includes("中国")) || !countryLabelText.some((text) => text.includes("印度尼西亚"))) {
+    throw new Error("Chinese country names are not rendered as text");
+  }
   const hasOverflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1);
   if (hasOverflow) throw new Error("page has horizontal overflow");
   const loaded = await page.locator(".book__cover-frame img").evaluateAll(

@@ -127,6 +127,7 @@ for (const content of [
 }
 
 expect(/data-menu-toggle/.test(html), "missing mobile menu control");
+expect(/<span>2022<\/span><i><\/i><span>2028<\/span>/.test(html), "education route years must run from 2022 to 2028");
 expect(/data-copy=["']youngbayia1129["']/.test(html), "missing WeChat copy control");
 expect(/id=["']travel-globe["']/.test(html), "missing interactive travel globe mount");
 expect(/class=["'][^"']*globe-status/.test(html), "missing globe loading/fallback status");
@@ -151,6 +152,7 @@ expect(!/@media\s*\([^)]*max-width:\s*768px[^}]*\}[\s\S]*?\.education-card[^}]*m
 expect(/\.globe-stage\s*\{/.test(css), "missing globe stage styling");
 expect(/\.book:hover\s+\.book__cover-frame\s+img\s*\{[^}]*grayscale\(0\)[^}]*saturate\((?:1|1\.[0-9]+)\)/s.test(css), "book hover does not restore cover color directly on the image");
 expect(/class=["'][^"']*travel-atlas/.test(html), "missing dual-map travel atlas");
+expect(html.includes("抵达中国具体的地方"), "missing approved China map heading");
 expect(/id=["']china-map["']/.test(html), "missing China destination map mount");
 expect(/cdn\.jsdelivr\.net\/npm\/d3@7\.9\.0/.test(html), "missing pinned D3 dependency");
 expect(/\.hero__portrait-wrap\s+picture\s*\{[^}]*height:\s*100%[^}]*display:\s*grid/s.test(css), "portrait picture wrapper does not participate in the hero grid");
@@ -168,6 +170,8 @@ expect(/const\s+CHINA_DESTINATIONS\s*=/.test(js), "missing China destination dat
 expect((js.match(/country:\s*["']/g) ?? []).length === 2, "world globe must contain exactly two visited countries");
 expect((js.match(/region:\s*["']/g) ?? []).length === 27, "China map must contain exactly 27 destinations");
 expect(/initTravelGlobe/.test(js), "missing globe initializer");
+expect(/htmlElementsData\(VISITED_COUNTRIES\)/.test(js), "country labels must use browser HTML for CJK glyph support");
+expect(!/\.labelsData\(VISITED_COUNTRIES\)/.test(js), "country labels still use the WebGL font layer without CJK glyphs");
 expect(/initChinaMap/.test(js), "missing China map initializer");
 expect(/rewindGeoJson/.test(js), "China GeoJSON rings are not normalized for D3 spherical winding");
 expect(/prefers-reduced-motion:\s*reduce/.test(js), "globe does not respect reduced motion");

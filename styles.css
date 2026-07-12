@@ -995,6 +995,20 @@ ul {
 .globe-tooltip strong { color: var(--white); font-size: 0.82rem; }
 .globe-tooltip span { color: rgba(255, 255, 255, 0.54); font-family: var(--mono); font-size: 0.6rem; }
 
+.globe-country-label {
+  display: grid;
+  min-width: max-content;
+  transform: translate(-50%, -50%);
+  color: #fff7e8;
+  line-height: 1;
+  text-align: center;
+  text-shadow: 0 2px 8px rgba(8, 31, 47, 0.75);
+  pointer-events: none;
+}
+
+.globe-country-label strong { font-family: var(--body); font-size: 0.72rem; }
+.globe-country-label span { margin-top: 4px; font-family: var(--mono); font-size: 0.46rem; letter-spacing: 0.08em; opacity: 0.78; }
+
 .travel-atlas {
   display: grid;
   grid-template-columns: minmax(0, 0.46fr) minmax(0, 0.54fr);

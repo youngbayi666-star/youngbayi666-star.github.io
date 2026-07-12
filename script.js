@@ -57,7 +57,12 @@ if ("IntersectionObserver" in window) {
   sections.forEach((section) => sectionObserver.observe(section));
 }
 
-const VISITED_PLACES = [
+const VISITED_COUNTRIES = [
+  { country: "China", label: "中国 / CHINA", lat: 36, lng: 103 },
+  { country: "Indonesia", label: "印度尼西亚 / INDONESIA", lat: -3, lng: 119 },
+];
+
+const CHINA_DESTINATIONS = [
   { name: "南昌", region: "江西", lat: 28.68, lng: 115.86, accent: "china" },
   { name: "上饶", region: "江西", lat: 28.45, lng: 117.97, accent: "china" },
   { name: "景德镇", region: "江西", lat: 29.27, lng: 117.18, accent: "china" },
@@ -85,7 +90,6 @@ const VISITED_PLACES = [
   { name: "三亚", region: "海南", lat: 18.25, lng: 109.51, accent: "china" },
   { name: "香港", region: "中国香港", lat: 22.32, lng: 114.17, accent: "special" },
   { name: "澳门", region: "中国澳门", lat: 22.20, lng: 113.54, accent: "special" },
-  { name: "巴厘岛", region: "印度尼西亚", lat: -8.41, lng: 115.19, accent: "overseas" },
 ];
 
 const initTravelGlobe = async (container) => {
@@ -107,7 +111,14 @@ const initTravelGlobe = async (container) => {
     const response = await fetch("https://cdn.jsdelivr.net/npm/globe.gl@2.46.1/example/datasets/ne_110m_admin_0_countries.geojson");
     if (!response.ok) throw new Error(`GeoJSON ${response.status}`);
     const countries = await response.json();
-    const size = Math.min(container.clientWidth || 900, 900);
+    const panel = container.closest(".travel-atlas__panel");
+    const measureWidth = () => {
+      if (!panel) return Math.min(container.clientWidth || 900, 900);
+      const style = window.getComputedStyle(panel);
+      const contentWidth = panel.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      return Math.min(contentWidth || 900, 900);
+    };
+    const size = measureWidth();
     const world = window.Globe()(container)
       .width(size)
       .height(Math.max(480, Math.min(size * 0.78, 700)))
@@ -117,22 +128,35 @@ const initTravelGlobe = async (container) => {
       .atmosphereAltitude(0.17)
       .polygonsData(countries.features)
       .polygonAltitude(0.006)
-      .polygonCapColor(() => "rgba(216,225,236,0.12)")
-      .polygonSideColor(() => "rgba(36,107,253,0.05)")
-      .polygonStrokeColor(() => "rgba(216,225,236,0.24)")
-      .pointsData(VISITED_PLACES)
-      .pointLat("lat")
-      .pointLng("lng")
-      .pointAltitude((place) => place.accent === "overseas" ? 0.045 : 0.025)
-      .pointRadius((place) => place.accent === "home" ? 0.22 : 0.14)
-      .pointColor((place) => place.accent === "overseas" || place.accent === "special" ? "#FF4D8D" : "#246BFD")
-      .pointLabel((place) => `<div class="globe-tooltip"><strong>${place.name}</strong><span>${place.region}</span></div>`)
-      .onPointClick((place) => world.pointOfView({ lat: place.lat, lng: place.lng, altitude: 1.65 }, 900));
+      .polygonCapColor((feature) => {
+        const country = feature.properties?.ADMIN;
+        if (country === "China" || country === "Indonesia") return "#E9784E";
+        const palette = ["#7FA98A", "#A8B98D", "#C2B78C", "#75A1A2"];
+        const code = feature.properties?.ISO_A3 ?? country ?? "land";
+        return palette[[...code].reduce((sum, char) => sum + char.charCodeAt(0), 0) % palette.length];
+      })
+      .polygonSideColor(() => "rgba(29,83,100,0.12)")
+      .polygonStrokeColor(() => "rgba(236,246,239,0.56)")
+      .polygonLabel((feature) => {
+        const country = feature.properties?.ADMIN;
+        if (country !== "China" && country !== "Indonesia") return "";
+        return `<div class="globe-tooltip"><strong>${country === "China" ? "中国" : "印度尼西亚"}</strong><span>${country.toUpperCase()}</span></div>`;
+      })
+      .labelsData(VISITED_COUNTRIES)
+      .labelLat("lat")
+      .labelLng("lng")
+      .labelText("label")
+      .labelColor(() => "#FFF7E8")
+      .labelDotRadius(0.25)
+      .labelSize(1.1)
+      .labelAltitude(0.025)
+      .labelResolution(3);
 
-    world.globeMaterial().color.set("#0A1220");
-    world.globeMaterial().emissive.set("#07101F");
-    world.globeMaterial().emissiveIntensity = 0.34;
-    world.pointOfView({ lat: 27, lng: 112, altitude: 1.75 }, 0);
+    world.globeMaterial().color.set("#187BB2");
+    world.globeMaterial().emissive.set("#0E5A88");
+    world.globeMaterial().emissiveIntensity = 0.2;
+    world.globeMaterial().shininess = 18;
+    world.pointOfView({ lat: 24, lng: 110, altitude: 1.92 }, 0);
 
     const controls = world.controls();
     controls.enablePan = false;
@@ -159,10 +183,10 @@ const initTravelGlobe = async (container) => {
     });
 
     const resize = () => {
-      const next = Math.min(container.clientWidth || 900, 900);
+      const next = measureWidth();
       world.width(next).height(Math.max(480, Math.min(next * 0.78, 700)));
     };
-    new ResizeObserver(resize).observe(container);
+    new ResizeObserver(resize).observe(panel ?? container);
     stage?.classList.add("is-ready");
   } catch (error) {
     console.warn("Travel globe unavailable", error);
@@ -172,6 +196,93 @@ const initTravelGlobe = async (container) => {
 
 const globeContainer = document.querySelector("#travel-globe");
 if (globeContainer) initTravelGlobe(globeContainer);
+
+const rewindGeoJson = (collection) => {
+  const reversePolygon = (polygon) => polygon.map((ring) => [...ring].reverse());
+  collection.features.forEach((feature) => {
+    if (feature.geometry?.type === "Polygon") {
+      feature.geometry.coordinates = reversePolygon(feature.geometry.coordinates);
+    } else if (feature.geometry?.type === "MultiPolygon") {
+      feature.geometry.coordinates = feature.geometry.coordinates.map(reversePolygon);
+    }
+  });
+  return collection;
+};
+
+const initChinaMap = async (svgElement) => {
+  const stage = svgElement.closest(".china-map-stage");
+  const status = stage?.querySelector(".china-map-status");
+  const tooltip = stage?.querySelector(".china-map-tooltip");
+
+  const showError = () => {
+    stage?.classList.add("has-error");
+    if (status) status.textContent = "中国地图暂时没有连上线，请稍后刷新再看。";
+  };
+
+  if (!window.d3) {
+    showError();
+    return;
+  }
+
+  try {
+    const response = await fetch("https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json");
+    if (!response.ok) throw new Error(`China GeoJSON ${response.status}`);
+    const china = rewindGeoJson(await response.json());
+    const d3 = window.d3;
+    const svg = d3.select(svgElement);
+    const projection = d3.geoMercator().fitExtent([[38, 32], [682, 590]], china);
+    const path = d3.geoPath(projection);
+    const priorityLabels = new Set(["北京", "上海", "西安", "长沙", "深圳", "香港", "澳门", "昆明", "三亚"]);
+
+    svg.append("g")
+      .attr("class", "china-provinces")
+      .selectAll("path")
+      .data(china.features)
+      .join("path")
+      .attr("class", "china-province")
+      .attr("d", path);
+
+    const nodes = svg.append("g")
+      .attr("class", "china-destinations")
+      .selectAll("g")
+      .data(CHINA_DESTINATIONS)
+      .join("g")
+      .attr("class", (place) => `china-destination china-destination--${place.accent}`)
+      .attr("transform", (place) => `translate(${projection([place.lng, place.lat]).join(",")})`)
+      .attr("tabindex", 0)
+      .attr("role", "img")
+      .attr("aria-label", (place) => `${place.region}，${place.name}`);
+
+    nodes.append("circle").attr("r", (place) => place.accent === "home" ? 6.5 : 4.5);
+    nodes.filter((place) => priorityLabels.has(place.name))
+      .append("text")
+      .attr("x", 9)
+      .attr("y", -8)
+      .text((place) => place.name);
+
+    const showTooltip = (event, place) => {
+      if (!tooltip) return;
+      const [x, y] = projection([place.lng, place.lat]);
+      tooltip.innerHTML = `<strong>${place.name}</strong><span>${place.region}</span>`;
+      tooltip.hidden = false;
+      tooltip.style.left = `${Math.min(82, Math.max(8, (x / 720) * 100))}%`;
+      tooltip.style.top = `${Math.min(86, Math.max(8, (y / 620) * 100))}%`;
+    };
+    const hideTooltip = () => { if (tooltip) tooltip.hidden = true; };
+    nodes
+      .on("mouseenter focus", showTooltip)
+      .on("mouseleave blur", hideTooltip)
+      .on("click", showTooltip);
+
+    stage?.classList.add("is-ready");
+  } catch (error) {
+    console.warn("China travel map unavailable", error);
+    showError();
+  }
+};
+
+const chinaMap = document.querySelector("#china-map");
+if (chinaMap) initChinaMap(chinaMap);
 
 document.querySelectorAll(".book__cover-frame img").forEach((image) => {
   image.addEventListener("error", () => {

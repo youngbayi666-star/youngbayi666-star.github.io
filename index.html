@@ -11,6 +11,7 @@
     <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/globe.gl@2.46.1/dist/globe.gl.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js" defer></script>
     <script src="script.js" defer></script>
   </head>
   <body data-active-section="top">
@@ -226,15 +227,28 @@
             <span>China · Hong Kong · Macau · Indonesia</span>
           </div>
 
-          <div class="globe-stage" aria-describedby="globe-description">
-            <div class="globe-orbit globe-orbit--outer" aria-hidden="true"></div>
-            <div class="globe-orbit globe-orbit--inner" aria-hidden="true"></div>
-            <div id="travel-globe" role="application" tabindex="0" aria-label="可旋转的旅行地球仪，点亮二十八个到访地点"></div>
-            <p class="globe-status" role="status">正在绘制走过的世界…</p>
-          </div>
-          <div class="globe-caption" id="globe-description">
-            <span>DRAG TO EXPLORE</span>
-            <p>拖动地球，看看我走过的地方。光点不是边界，只是下一段路的起点。</p>
+          <div class="travel-atlas" id="globe-description">
+            <article class="travel-atlas__panel travel-atlas__world">
+              <header class="atlas-panel__heading"><span>01 · WORLD</span><h3>从世界看，走过两国。</h3></header>
+              <div class="globe-stage">
+                <div class="globe-orbit" aria-hidden="true"></div>
+                <div id="travel-globe" role="application" tabindex="0" aria-label="可旋转的世界地球仪，高亮中国与印度尼西亚"></div>
+                <p class="globe-status" role="status">正在点亮走过的国家…</p>
+              </div>
+              <p class="atlas-panel__note"><span>DRAG TO ROTATE</span> 中国 · 印度尼西亚</p>
+            </article>
+            <article class="travel-atlas__panel travel-atlas__china">
+              <header class="atlas-panel__heading"><span>02 · CHINA</span><h3>把中国放大，抵达具体的地方。</h3></header>
+              <div class="china-map-stage">
+                <svg id="china-map" viewBox="0 0 720 620" role="img" aria-labelledby="china-map-title china-map-description">
+                  <title id="china-map-title">中国旅行目的地地图</title>
+                  <desc id="china-map-description">以真实省级边界展示二十七个中国境内到访地点。</desc>
+                </svg>
+                <p class="china-map-status" role="status">正在展开中国地图…</p>
+                <div class="china-map-tooltip" hidden></div>
+              </div>
+              <p class="atlas-panel__note"><span>27 STOPS</span> 悬停或聚焦标点查看地点</p>
+            </article>
           </div>
         </div>
       </section>

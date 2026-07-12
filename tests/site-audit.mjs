@@ -149,6 +149,10 @@ expect(/--mobile-book-columns:\s*2/.test(css), "missing explicit mobile bookshel
 expect(!/\.education-card\s*\{[^}]*min-height:\s*520px/s.test(css), "education cards still force 520px height");
 expect(!/@media\s*\([^)]*max-width:\s*768px[^}]*\}[\s\S]*?\.education-card[^}]*min-height:\s*470px/.test(css), "mobile education cards still force 470px height");
 expect(/\.globe-stage\s*\{/.test(css), "missing globe stage styling");
+expect(/\.book:hover\s+\.book__cover-frame\s+img\s*\{[^}]*grayscale\(0\)[^}]*saturate\((?:1|1\.[0-9]+)\)/s.test(css), "book hover does not restore cover color directly on the image");
+expect(/class=["'][^"']*travel-atlas/.test(html), "missing dual-map travel atlas");
+expect(/id=["']china-map["']/.test(html), "missing China destination map mount");
+expect(/cdn\.jsdelivr\.net\/npm\/d3@7\.9\.0/.test(html), "missing pinned D3 dependency");
 expect(/\.hero__portrait-wrap\s+picture\s*\{[^}]*height:\s*100%[^}]*display:\s*grid/s.test(css), "portrait picture wrapper does not participate in the hero grid");
 expect(/\.hero__portrait-wrap\s+picture\s*\{[^}]*position:\s*absolute[^}]*inset:\s*0/s.test(css), "portrait picture wrapper is not bounded to the hero frame");
 expect(/class=["'][^"']*work-chapter__logo--invert/.test(html), "white PKU logo lacks an explicit contrast class");
@@ -159,9 +163,13 @@ const js = read("script.js");
 expect(/IntersectionObserver/.test(js), "missing section observer");
 expect(/Escape/.test(js), "missing Escape menu handling");
 expect(/navigator\.clipboard/.test(js), "missing clipboard enhancement");
-expect(/const\s+VISITED_PLACES\s*=/.test(js), "missing visited-place data");
-expect((js.match(/\bname:\s*["']/g) ?? []).length === 28, "travel globe must contain 28 place records");
+expect(/const\s+VISITED_COUNTRIES\s*=/.test(js), "missing visited-country data");
+expect(/const\s+CHINA_DESTINATIONS\s*=/.test(js), "missing China destination data");
+expect((js.match(/country:\s*["']/g) ?? []).length === 2, "world globe must contain exactly two visited countries");
+expect((js.match(/region:\s*["']/g) ?? []).length === 27, "China map must contain exactly 27 destinations");
 expect(/initTravelGlobe/.test(js), "missing globe initializer");
+expect(/initChinaMap/.test(js), "missing China map initializer");
+expect(/rewindGeoJson/.test(js), "China GeoJSON rings are not normalized for D3 spherical winding");
 expect(/prefers-reduced-motion:\s*reduce/.test(js), "globe does not respect reduced motion");
 
 for (const [name, pattern] of [

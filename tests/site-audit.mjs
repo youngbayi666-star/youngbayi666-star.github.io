@@ -37,7 +37,7 @@ for (const content of [
 }
 
 expect(fs.existsSync(scriptPath), "missing script.js");
-expect(/<script src=["']script\.js\?v=20260712-3["'] defer><\/script>/.test(html), "site script URL is not cache-versioned");
+expect(/<script src=["']script\.js\?v=\d{8}(?:-\d+)?["'] defer><\/script>/.test(html), "site script URL is not cache-versioned");
 expect(/prefers-reduced-motion/.test(css), "missing reduced motion support");
 expect(!/href=["']\s*["']/.test(html), "empty href found");
 expect(!/<img[^>]+src=["']https?:\/\//i.test(html), "remote image source found");
@@ -104,6 +104,9 @@ const assetManifest = [
   "assets/logos/logo-pku-institute.webp",
   "assets/logos/logo-bytedance.png",
   "assets/logos/logo-bytedance.webp",
+  "assets/logos/logo-jd-tech.svg",
+  "assets/fonts/archivo-regular.ttf",
+  "assets/fonts/archivo-bold.ttf",
   "assets/books/evolutionary-psychology.jpg",
   "assets/books/the-world-i-see.jpg",
   "assets/books/life-is-a-sea.jpg",
@@ -119,6 +122,7 @@ for (const content of [
   "香港中文大学（深圳）",
   "北京大学长沙计算与数字经济研究院",
   "字节跳动",
+  "京东科技",
   "28 destinations",
   "144 本",
   "522 天",
@@ -136,17 +140,17 @@ expect(/cdn\.jsdelivr\.net\/npm\/globe\.gl@/.test(html), "missing pinned Globe.g
 expect(!/class=["'][^"']*city-index/.test(html), "legacy travel city table still exists");
 expect(!/class=["'][^"']*(?:map-scroll|travel-map)/.test(html), "legacy static travel map still exists");
 
-for (const token of ["#F3F6FA", "#101318", "#246BFD", "#FF4D8D", "#D8E1EC"]) {
+for (const token of ["#FAFBFC", "#131C29", "#2253C7", "#EAF0F8", "#DEE4EC"]) {
   expect(css.toUpperCase().includes(token), `missing color token ${token}`);
 }
 expect(/@media\s*\([^)]*max-width:\s*768px/.test(css), "missing tablet/mobile breakpoint");
 expect(/:focus-visible/.test(css), "missing visible keyboard focus");
 expect(/overflow-x:\s*(clip|hidden)/.test(css), "missing page overflow guard");
 expect(/--content-max:\s*1180px/.test(css), "missing strict 1180px content width token");
-expect(/--hero-title-max:\s*7\.2rem/.test(css), "missing controlled hero title scale");
-expect(/--section-title-max:\s*5\.2rem/.test(css), "missing controlled section title scale");
-expect(/--mobile-title-max:\s*3\.6rem/.test(css), "missing controlled mobile title scale");
-expect(/--mobile-contact-title-max:\s*2\.7rem/.test(css), "missing controlled mobile contact title scale");
+expect(/--hero-title-max:\s*6\.4rem/.test(css), "missing controlled hero title scale");
+expect(/--section-title-max:\s*3\.6rem/.test(css), "missing controlled section title scale");
+expect(/--mobile-title-max:\s*2\.5rem/.test(css), "missing controlled mobile title scale");
+expect(/--mobile-contact-title-max:\s*2\.5rem/.test(css), "missing controlled mobile contact title scale");
 expect(/--mobile-book-columns:\s*2/.test(css), "missing explicit mobile bookshelf contract");
 expect(!/\.education-card\s*\{[^}]*min-height:\s*520px/s.test(css), "education cards still force 520px height");
 expect(!/@media\s*\([^)]*max-width:\s*768px[^}]*\}[\s\S]*?\.education-card[^}]*min-height:\s*470px/.test(css), "mobile education cards still force 470px height");

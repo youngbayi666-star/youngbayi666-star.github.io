@@ -119,9 +119,11 @@ const initTravelGlobe = async (container) => {
       return Math.min(contentWidth || 900, 900);
     };
     const size = measureWidth();
+    // Keep the globe fully visible in narrow panels instead of cropping its sides.
+    const heightForWidth = (width) => Math.min(width, Math.max(480, Math.min(width * 0.78, 700)));
     const world = window.Globe()(container)
       .width(size)
-      .height(Math.max(480, Math.min(size * 0.78, 700)))
+      .height(heightForWidth(size))
       .backgroundColor("rgba(0,0,0,0)")
       .showAtmosphere(true)
       .atmosphereColor("#246BFD")
@@ -186,7 +188,7 @@ const initTravelGlobe = async (container) => {
 
     const resize = () => {
       const next = measureWidth();
-      world.width(next).height(Math.max(480, Math.min(next * 0.78, 700)));
+      world.width(next).height(heightForWidth(next));
     };
     new ResizeObserver(resize).observe(panel ?? container);
     stage?.classList.add("is-ready");

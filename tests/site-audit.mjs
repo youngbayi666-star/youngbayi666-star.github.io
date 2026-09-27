@@ -132,7 +132,7 @@ for (const content of [
 }
 
 expect(/data-menu-toggle/.test(html), "missing mobile menu control");
-expect(/<span>2022<\/span><i><\/i><span>2028<\/span>/.test(html), "education route years must run from 2022 to 2028");
+expect(/<span>2022<\/span><i><\/i><span>2027<\/span>/.test(html), "education route years must run from 2022 to 2027");
 expect(/data-copy=["']youngbayia1129["']/.test(html), "missing WeChat copy control");
 expect(/id=["']travel-globe["']/.test(html), "missing interactive travel globe mount");
 expect(/class=["'][^"']*globe-status/.test(html), "missing globe loading/fallback status");

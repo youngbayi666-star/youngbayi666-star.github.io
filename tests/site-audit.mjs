@@ -155,10 +155,6 @@ expect(!/\.education-card\s*\{[^}]*min-height:\s*520px/s.test(css), "education c
 expect(!/@media\s*\([^)]*max-width:\s*768px[^}]*\}[\s\S]*?\.education-card[^}]*min-height:\s*470px/.test(css), "mobile education cards still force 470px height");
 expect(/\.globe-stage\s*\{/.test(css), "missing globe stage styling");
 expect(/\.book:hover\s+\.book__cover-frame\s+img\s*\{[^}]*grayscale\(0\)[^}]*saturate\((?:1|1\.[0-9]+)\)/s.test(css), "book hover does not restore cover color directly on the image");
-expect(/class=["'][^"']*travel-atlas/.test(html), "missing dual-map travel atlas");
-expect(html.includes("抵达中国具体的地方"), "missing approved China map heading");
-expect(/id=["']china-map["']/.test(html), "missing China destination map mount");
-expect(/cdn\.jsdelivr\.net\/npm\/d3@7\.9\.0/.test(html), "missing pinned D3 dependency");
 expect(/\.hero__portrait-wrap\s+picture\s*\{[^}]*height:\s*100%[^}]*display:\s*grid/s.test(css), "portrait picture wrapper does not participate in the hero grid");
 expect(/\.hero__portrait-wrap\s+picture\s*\{[^}]*position:\s*absolute[^}]*inset:\s*0/s.test(css), "portrait picture wrapper is not bounded to the hero frame");
 expect(/class=["'][^"']*work-chapter__logo--invert/.test(html), "white PKU logo lacks an explicit contrast class");
@@ -176,11 +172,8 @@ expect((js.match(/region:\s*["']/g) ?? []).length === 27, "China map must contai
 expect(/initTravelGlobe/.test(js), "missing globe initializer");
 expect(/htmlElementsData\(VISITED_COUNTRIES\)/.test(js), "country labels must use browser HTML for CJK glyph support");
 expect(!/\.labelsData\(VISITED_COUNTRIES\)/.test(js), "country labels still use the WebGL font layer without CJK glyphs");
-expect(/initChinaMap/.test(js), "missing China map initializer");
-expect(/rewindGeoJson/.test(js), "China GeoJSON rings are not normalized for D3 spherical winding");
-expect(/fetch\(["']assets\/maps\/china-provinces\.json\?v=1["']\)/.test(js), "China map must load versioned same-origin GeoJSON");
 expect(!/geo\.datav\.aliyun\.com/.test(js), "China map still depends on DataV cross-origin delivery");
-expect(fs.existsSync(path.join(root, "assets/maps/china-provinces.json")), "missing local China province GeoJSON");
+expect(fs.existsSync(path.join(root, "assets/maps/world-countries.geojson")), "missing local world GeoJSON");
 expect(/prefers-reduced-motion:\s*reduce/.test(js), "globe does not respect reduced motion");
 
 for (const [name, pattern] of [

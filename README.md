@@ -22,7 +22,7 @@ http://127.0.0.1:8000/
 - 页面文案与板块：编辑 `index.html`。
 - 配色、排版与响应式布局：编辑 `styles.css`。
 - 导航、微信复制与滚动索引：编辑 `script.js`。
-- 旅行地点：编辑 `#travel` 中的 SVG 节点和 `.city-index`。
+- 旅行地点：编辑 `script.js` 中的 `CHINA_DESTINATIONS` 和 `VISITED_COUNTRIES`；所有坐标在同一个地球上展示。
 - 精选书目：编辑 `#reading` 中的 `.book`，并将封面保存到 `assets/books/`。
 - 机构标识：保存到 `assets/logos/`，不要使用远程图片热链。
 - 当前状态：编辑 `#now` 并同步更新月份。

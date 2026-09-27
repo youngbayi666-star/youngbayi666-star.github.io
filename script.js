@@ -92,260 +92,143 @@ const CHINA_DESTINATIONS = [
   { name: "澳门", region: "中国澳门", lat: 22.20, lng: 113.54, accent: "special" },
 ];
 
-const atlasTabs = [...document.querySelectorAll('[data-atlas-target]')];
-const setAtlasView = (view, moveFocus = false) => {
-  atlasTabs.forEach((tab) => {
-    const active = tab.dataset.atlasTarget === view;
-    tab.setAttribute('aria-selected', String(active));
-    tab.tabIndex = active ? 0 : -1;
-    const panel = document.getElementById(tab.getAttribute('aria-controls'));
-    if (panel) panel.hidden = !active;
-    if (active && moveFocus) tab.focus({ preventScroll: true });
-  });
-};
-atlasTabs.forEach((tab, index) => {
-  tab.addEventListener('click', () => setAtlasView(tab.dataset.atlasTarget));
-  tab.addEventListener('keydown', (event) => {
-    let next;
-    if (event.key === 'ArrowRight') next = (index + 1) % atlasTabs.length;
-    if (event.key === 'ArrowLeft') next = (index - 1 + atlasTabs.length) % atlasTabs.length;
-    if (event.key === 'Home') next = 0;
-    if (event.key === 'End') next = atlasTabs.length - 1;
-    if (next === undefined) return;
-    event.preventDefault();
-    setAtlasView(atlasTabs[next].dataset.atlasTarget, true);
-  });
-});
-document.querySelector('[data-atlas-enter]')?.addEventListener('click', () => setAtlasView('china', true));
-
+// One continuous globe contains every stop, at both world and city scale.
+const TRAVEL_STOPS = [...CHINA_DESTINATIONS, { ...VISITED_COUNTRIES[1], name: "印度尼西亚", area: "海外", accent: "abroad" }];
 const initTravelGlobe = async (container) => {
-  const stage = container.closest(".globe-stage");
-  const status = stage?.querySelector(".globe-status");
-  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const stage = container.closest('.globe-stage');
+  const status = stage.querySelector('.globe-status');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const number = document.querySelector('[data-stop-number]');
+  const name = document.querySelector('[data-stop-name]');
+  const region = document.querySelector('[data-stop-region]');
+  const coordinates = document.querySelector('[data-stop-coordinates]');
+  const directory = document.querySelector('[data-travel-directory]');
+  let selected = -1;
+  let world;
 
-  const showError = () => {
-    stage?.classList.add("has-error");
-    if (status) status.textContent = "地球暂时没有连上线，请稍后刷新再看。";
+  const syncButtons = () => document.querySelectorAll('[data-travel-stop]').forEach(button => {
+    button.setAttribute('aria-pressed', String(selected >= 0 && button.dataset.travelStop === TRAVEL_STOPS[selected].name));
+  });
+  const selectStop = (index) => {
+    selected = (index + TRAVEL_STOPS.length) % TRAVEL_STOPS.length;
+    const place = TRAVEL_STOPS[selected];
+    number.textContent = `COORDINATE / ${String(selected + 1).padStart(2, '0')}`;
+    name.textContent = place.name;
+    region.textContent = place.region || place.area;
+    coordinates.textContent = `${Math.abs(place.lat).toFixed(2)}°${place.lat < 0 ? 'S' : 'N'} / ${place.lng.toFixed(2)}°E`;
+    container.dataset.selectedStop = place.name;
+    syncButtons();
+    if (!world) return;
+    world.htmlElementsData([place]);
+    world.pointRadius(point => point.name === place.name ? .36 : .13);
+    world.pointColor(point => point.name === place.name ? '#E6B971' : '#D6AA65');
+    world.pointOfView({ lat: place.lat, lng: place.lng, altitude: place.accent === 'abroad' ? 1.2 : .9 }, reducedMotion ? 0 : 1100);
   };
-
-  if (typeof window.Globe !== "function") {
-    showError();
-    return;
-  }
+  const resetWorld = () => {
+    selected = -1;
+    number.textContent = 'EXPLORING / EARTH';
+    name.replaceChildren(document.createTextNode('世界很大。'), document.createElement('br'), document.createTextNode('继续出发。'));
+    region.textContent = '中国 · 印度尼西亚';
+    coordinates.textContent = '从一个坐标，靠近一片真实的风景。';
+    delete container.dataset.selectedStop;
+    syncButtons();
+    if (!world) return;
+    world.htmlElementsData(VISITED_COUNTRIES).pointRadius(.16).pointColor(() => '#D6AA65');
+    world.pointOfView({ lat: 24, lng: 108, altitude: stage.clientWidth > 700 ? 1.75 : 2.05 }, reducedMotion ? 0 : 1000);
+  };
+  TRAVEL_STOPS.forEach((place, index) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.dataset.travelStop = place.name;
+    button.textContent = place.name;
+    button.addEventListener('click', () => selectStop(index));
+    directory.append(button);
+  });
+  document.querySelectorAll('.travel-route [data-travel-stop]').forEach(button => {
+    button.addEventListener('click', () => selectStop(TRAVEL_STOPS.findIndex(place => place.name === button.dataset.travelStop)));
+  });
+  document.querySelector('[data-random-stop]').addEventListener('click', () => {
+    // Always move to a different stop when a place is already selected.
+    const offset = 1 + Math.floor(Math.random() * (TRAVEL_STOPS.length - 1));
+    selectStop(selected < 0 ? Math.floor(Math.random() * TRAVEL_STOPS.length) : selected + offset);
+  });
+  document.querySelector('[data-stop-prev]').addEventListener('click', () => selectStop(selected < 0 ? TRAVEL_STOPS.length - 1 : selected - 1));
+  document.querySelector('[data-stop-next]').addEventListener('click', () => selectStop(selected + 1));
+  document.querySelector('[data-world-reset]').addEventListener('click', resetWorld);
+  syncButtons();
+  container.addEventListener('keydown', event => {
+    if (event.key === 'Escape') { resetWorld(); return; }
+    const delta = event.key === 'ArrowLeft' ? -8 : event.key === 'ArrowRight' ? 8 : 0;
+    if (!delta || !world) return;
+    event.preventDefault();
+    const view = world.pointOfView();
+    world.pointOfView({ ...view, lng: view.lng + delta }, reducedMotion ? 0 : 250);
+  });
 
   try {
-    const response = await fetch("https://cdn.jsdelivr.net/npm/globe.gl@2.46.1/example/datasets/ne_110m_admin_0_countries.geojson");
-    if (!response.ok) throw new Error(`GeoJSON ${response.status}`);
+    if (typeof window.Globe !== 'function') throw new Error('Globe library unavailable');
+    const response = await fetch('assets/maps/world-countries.geojson?v=1');
+    if (!response.ok) throw new Error(`World map ${response.status}`);
     const countries = await response.json();
-    const measureWidth = () => Math.min(stage?.clientWidth || 600, 900);
-    const size = measureWidth();
-    // Keep the globe fully visible in narrow panels instead of cropping its sides.
-    const heightForWidth = (width) => Math.min(width, 500);
-    const world = window.Globe()(container)
-      .width(size)
-      .height(heightForWidth(size))
-      .backgroundColor("rgba(0,0,0,0)")
-      .showAtmosphere(true)
-      .atmosphereColor("#719BC1")
-      .atmosphereAltitude(0.1)
+    world = window.Globe()(container)
+      .width(stage.clientWidth).height(stage.clientHeight)
+      .backgroundColor('rgba(0,0,0,0)').showAtmosphere(false)
       .polygonsData(countries.features)
-      .polygonAltitude(0.006)
-      .polygonCapColor((feature) => {
-        const country = feature.properties?.ADMIN;
-        if (country === "China" || country === "Indonesia") return "#C68A44";
-        const palette = ["#728D9E", "#819AA8", "#93A9B2", "#698596"];
-        const code = feature.properties?.ISO_A3 ?? country ?? "land";
-        return palette[[...code].reduce((sum, char) => sum + char.charCodeAt(0), 0) % palette.length];
-      })
-      .polygonSideColor(() => "rgba(29,83,100,0.12)")
-      .polygonStrokeColor(() => "rgba(231,239,241,0.5)")
-      .polygonLabel((feature) => {
-        const country = feature.properties?.ADMIN;
-        if (country !== "China" && country !== "Indonesia") return "";
-        return `<div class="globe-tooltip"><strong>${country === "China" ? "中国" : "印度尼西亚"}</strong><span>${country.toUpperCase()}</span></div>`;
-      })
+      .polygonAltitude(.003)
+      .polygonCapColor(feature => ['China', 'Indonesia'].includes(feature.properties?.ADMIN) ? '#3E6899' : '#A7B9BF')
+      .polygonSideColor(() => '#A7B9BF')
+      .polygonStrokeColor(() => 'rgba(242,241,234,.65)')
+      .polygonsTransitionDuration(0)
+      .pointsData(TRAVEL_STOPS)
+      .pointLat('lat').pointLng('lng').pointAltitude(.008).pointRadius(.16)
+      .pointColor(() => '#D6AA65').pointsTransitionDuration(0)
+      .pointLabel(place => place.name)
+      .onPointClick(place => selectStop(TRAVEL_STOPS.indexOf(place)))
       .htmlElementsData(VISITED_COUNTRIES)
-      .htmlLat("lat")
-      .htmlLng("lng")
-      .htmlAltitude(0.025)
-      .htmlElement((place) => {
-        const label = document.createElement("div");
-        label.className = "globe-country-label";
-        const [chinese, english] = place.label.split(" / ");
-        label.innerHTML = `<strong>${chinese}</strong><span>${english}</span>`;
+      .htmlLat('lat').htmlLng('lng').htmlAltitude(.014).htmlTransitionDuration(0)
+      .htmlElement(place => {
+        const label = document.createElement('div');
+        label.setAttribute('aria-hidden', 'true');
+        if (place.name) {
+          label.className = 'globe-place-label';
+          label.textContent = place.name;
+        } else {
+          label.className = 'globe-country-label';
+          const [chinese, english] = place.label.split(' / ');
+          label.append(document.createTextNode(chinese));
+          const subtitle = document.createElement('span');
+          subtitle.textContent = english;
+          label.append(subtitle);
+        }
         return label;
-      });
-
-    world.globeMaterial().color.set("#24445D");
-    world.globeMaterial().emissive.set("#172C43");
-    world.globeMaterial().emissiveIntensity = 0.3;
-    world.globeMaterial().shininess = 5;
-    world.pointOfView({ lat: 24, lng: 110, altitude: 1.92 }, 0);
-
+      })
+      .onZoom(view => { container.dataset.camera = `${view.lat.toFixed(3)},${view.lng.toFixed(3)},${view.altitude.toFixed(3)}`; });
+    world.globeMaterial().color.set('#D5E0DF');
+    world.globeMaterial().emissive.set('#D5E0DF');
+    world.globeMaterial().emissiveIntensity = .25;
+    world.globeMaterial().shininess = 0;
     const controls = world.controls();
     controls.enablePan = false;
-    controls.minDistance = 180;
-    controls.maxDistance = 430;
-    controls.autoRotate = false;
     controls.enableZoom = false;
-    const countryButtons = [...document.querySelectorAll("[data-globe-country]")];
-    const clearCountrySelection = () => countryButtons.forEach((button) => button.setAttribute("aria-pressed", "false"));
-    controls.addEventListener("start", clearCountrySelection);
-    countryButtons.forEach((button) => {
-      button.disabled = false;
-      button.setAttribute("aria-pressed", "false");
-      button.addEventListener("click", () => {
-        const place = VISITED_COUNTRIES.find((country) => country.country === button.dataset.globeCountry);
-        if (!place) return;
-        clearCountrySelection();
-        button.setAttribute("aria-pressed", "true");
-        world.pointOfView({ lat: place.lat, lng: place.lng, altitude: 1.92 }, reducedMotion ? 0 : 650);
-      });
-    });
-
-    container.addEventListener("keydown", (event) => {
-      const delta = event.key === "ArrowLeft" ? -8 : event.key === "ArrowRight" ? 8 : 0;
-      if (!delta) return;
-      event.preventDefault();
-      clearCountrySelection();
-      const view = world.pointOfView();
-      world.pointOfView({ ...view, lng: view.lng + delta }, reducedMotion ? 0 : 260);
-    });
-
-    const resize = () => {
-      if (!stage?.clientWidth) return;
-      const next = measureWidth();
-      world.width(next).height(heightForWidth(next));
-    };
-    new ResizeObserver(resize).observe(stage ?? container);
-    stage?.classList.add("is-ready");
+    controls.autoRotate = false;
+    controls.minDistance = 120;
+    controls.maxDistance = 450;
+    if (selected < 0) resetWorld(); else selectStop(selected);
+    new ResizeObserver(() => {
+      if (stage.clientWidth && stage.clientHeight) world.width(stage.clientWidth).height(stage.clientHeight);
+    }).observe(stage);
+    new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting) world.resumeAnimation(); else world.pauseAnimation();
+    }, { rootMargin: '200px' }).observe(stage);
+    stage.classList.add('is-ready');
   } catch (error) {
-    console.warn("Travel globe unavailable", error);
-    showError();
+    stage.classList.add('has-error');
+    status.textContent = '地球暂时未能加载，你仍可通过下方地名浏览我的旅行坐标。';
+    console.warn('Travel globe unavailable', error);
   }
 };
-
-const globeContainer = document.querySelector("#travel-globe");
+const globeContainer = document.querySelector('#travel-globe');
 if (globeContainer) initTravelGlobe(globeContainer);
-
-const rewindGeoJson = (collection) => {
-  const reversePolygon = (polygon) => polygon.map((ring) => [...ring].reverse());
-  collection.features.forEach((feature) => {
-    if (feature.geometry?.type === "Polygon") {
-      feature.geometry.coordinates = reversePolygon(feature.geometry.coordinates);
-    } else if (feature.geometry?.type === "MultiPolygon") {
-      feature.geometry.coordinates = feature.geometry.coordinates.map(reversePolygon);
-    }
-  });
-  return collection;
-};
-
-const initChinaMap = async (svgElement) => {
-  const stage = svgElement.closest(".china-map-stage");
-  const status = stage?.querySelector(".china-map-status");
-  const tooltip = stage?.querySelector(".china-map-tooltip");
-
-  const showError = () => {
-    stage?.classList.add("has-error");
-    if (status) status.textContent = "中国地图暂时没有连上线，请稍后刷新再看。";
-  };
-
-  if (!window.d3) {
-    showError();
-    return;
-  }
-
-  try {
-    const response = await fetch("assets/maps/china-provinces.json?v=1");
-    if (!response.ok) throw new Error(`China GeoJSON ${response.status}`);
-    const china = rewindGeoJson(await response.json());
-    const d3 = window.d3;
-    const svg = d3.select(svgElement);
-    const projection = d3.geoMercator().fitExtent([[38, 32], [682, 590]], china);
-    const path = d3.geoPath(projection);
-    const priorityLabels = new Set(["北京", "上海", "西安", "长沙", "深圳", "昆明"]);
-
-    svg.append("g")
-      .attr("class", "china-provinces")
-      .selectAll("path")
-      .data(china.features)
-      .join("path")
-      .attr("class", "china-province")
-      .attr("d", path);
-
-    const nodes = svg.append("g")
-      .attr("class", "china-destinations")
-      .selectAll("g")
-      .data(CHINA_DESTINATIONS)
-      .join("g")
-      .attr("class", (place) => `china-destination china-destination--${place.accent}`)
-      .attr("transform", (place) => `translate(${projection([place.lng, place.lat]).join(",")})`)
-      .attr("tabindex", 0)
-      .attr("role", "button")
-      .attr("aria-pressed", "false")
-      .attr("aria-label", (place) => `${place.region}，${place.name}`);
-
-    nodes.append("circle").attr("class", "destination-hit").attr("r", 13);
-    nodes.append("circle").attr("r", (place) => place.accent === "home" ? 6.5 : 4.5);
-    nodes.filter((place) => priorityLabels.has(place.name))
-      .append("text")
-      .attr("x", 9)
-      .attr("y", -8)
-      .text((place) => place.name);
-
-    const destinationSelect = document.querySelector("#destination-select");
-    const destinationDetail = document.querySelector("#destination-detail");
-    const selectDestination = (place) => {
-      if (tooltip) tooltip.hidden = true;
-      nodes.classed("is-selected", (point) => point.name === place.name)
-        .attr("aria-pressed", (point) => String(point.name === place.name));
-      if (destinationSelect) destinationSelect.value = place.name;
-      if (destinationDetail) destinationDetail.textContent = `${place.name} · ${place.region} / ${place.lat.toFixed(2)}°N, ${place.lng.toFixed(2)}°E`;
-    };
-    if (destinationSelect) {
-      destinationSelect.replaceChildren(...CHINA_DESTINATIONS.map((place) => new Option(`${place.name} · ${place.region}`, place.name)));
-      destinationSelect.disabled = false;
-      destinationSelect.addEventListener("change", () => {
-        const place = CHINA_DESTINATIONS.find((point) => point.name === destinationSelect.value);
-        if (place) selectDestination(place);
-      });
-      selectDestination(CHINA_DESTINATIONS.find((place) => place.name === "深圳"));
-    }
-    const showTooltip = (event, place) => {
-      if (!tooltip) return;
-      const [x, y] = projection([place.lng, place.lat]);
-      tooltip.innerHTML = `<strong>${place.name}</strong><span>${place.region}</span>`;
-      tooltip.hidden = false;
-      const mapBounds = svgElement.getBoundingClientRect();
-      const stageBounds = stage.getBoundingClientRect();
-      const left = mapBounds.left - stageBounds.left + (x / 720) * mapBounds.width;
-      const top = mapBounds.top - stageBounds.top + (y / 620) * mapBounds.height;
-      const halfWidth = tooltip.offsetWidth / 2;
-      tooltip.style.left = `${Math.min(stageBounds.width - halfWidth, Math.max(halfWidth, left))}px`;
-      tooltip.style.top = `${Math.max(tooltip.offsetHeight * 1.15, top)}px`;
-    };
-    const hideTooltip = () => { if (tooltip) tooltip.hidden = true; };
-    nodes
-      .on("mouseenter focus", showTooltip)
-      .on("mouseleave blur", hideTooltip)
-      .on("click", (event, place) => { selectDestination(place); showTooltip(event, place); })
-      .on("keydown", (event, place) => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          selectDestination(place);
-        }
-        if (event.key === "Escape") hideTooltip();
-      });
-
-    stage?.classList.add("is-ready");
-  } catch (error) {
-    console.warn("China travel map unavailable", error);
-    showError();
-  }
-};
-
-const chinaMap = document.querySelector("#china-map");
-if (chinaMap) initChinaMap(chinaMap);
 
 document.querySelectorAll(".book__cover-frame img").forEach((image) => {
   image.addEventListener("error", () => {

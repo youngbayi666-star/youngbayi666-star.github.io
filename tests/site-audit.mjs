@@ -17,7 +17,6 @@ for (const id of [
   "about",
   "education",
   "work",
-  "achievements",
   "travel",
   "reading",
   "now",

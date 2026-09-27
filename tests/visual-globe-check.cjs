@@ -21,7 +21,9 @@ async function verifyPage(page, screenshotName) {
   }
   if (lastError) throw lastError;
   await page.locator("#travel-globe canvas").waitFor({ state: "visible", timeout: 45_000 });
+  await page.locator("#atlas-tab-china").click();
   await page.locator("#china-map .china-province").first().waitFor({ state: "visible", timeout: 45_000 });
+  await page.locator("#atlas-tab-world").click();
   await page.locator("#travel").scrollIntoViewIfNeeded();
   await page.waitForTimeout(1_000);
 

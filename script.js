@@ -92,6 +92,32 @@ const CHINA_DESTINATIONS = [
   { name: "澳门", region: "中国澳门", lat: 22.20, lng: 113.54, accent: "special" },
 ];
 
+const atlasTabs = [...document.querySelectorAll('[data-atlas-target]')];
+const setAtlasView = (view, moveFocus = false) => {
+  atlasTabs.forEach((tab) => {
+    const active = tab.dataset.atlasTarget === view;
+    tab.setAttribute('aria-selected', String(active));
+    tab.tabIndex = active ? 0 : -1;
+    const panel = document.getElementById(tab.getAttribute('aria-controls'));
+    if (panel) panel.hidden = !active;
+    if (active && moveFocus) tab.focus({ preventScroll: true });
+  });
+};
+atlasTabs.forEach((tab, index) => {
+  tab.addEventListener('click', () => setAtlasView(tab.dataset.atlasTarget));
+  tab.addEventListener('keydown', (event) => {
+    let next;
+    if (event.key === 'ArrowRight') next = (index + 1) % atlasTabs.length;
+    if (event.key === 'ArrowLeft') next = (index - 1 + atlasTabs.length) % atlasTabs.length;
+    if (event.key === 'Home') next = 0;
+    if (event.key === 'End') next = atlasTabs.length - 1;
+    if (next === undefined) return;
+    event.preventDefault();
+    setAtlasView(atlasTabs[next].dataset.atlasTarget, true);
+  });
+});
+document.querySelector('[data-atlas-enter]')?.addEventListener('click', () => setAtlasView('china', true));
+
 const initTravelGlobe = async (container) => {
   const stage = container.closest(".globe-stage");
   const status = stage?.querySelector(".globe-status");
@@ -111,34 +137,28 @@ const initTravelGlobe = async (container) => {
     const response = await fetch("https://cdn.jsdelivr.net/npm/globe.gl@2.46.1/example/datasets/ne_110m_admin_0_countries.geojson");
     if (!response.ok) throw new Error(`GeoJSON ${response.status}`);
     const countries = await response.json();
-    const panel = container.closest(".travel-atlas__panel");
-    const measureWidth = () => {
-      if (!panel) return Math.min(container.clientWidth || 900, 900);
-      const style = window.getComputedStyle(panel);
-      const contentWidth = panel.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
-      return Math.min(contentWidth || 900, 900);
-    };
+    const measureWidth = () => Math.min(stage?.clientWidth || 600, 900);
     const size = measureWidth();
     // Keep the globe fully visible in narrow panels instead of cropping its sides.
-    const heightForWidth = (width) => Math.min(width, Math.max(480, Math.min(width * 0.78, 700)));
+    const heightForWidth = (width) => Math.min(width, 500);
     const world = window.Globe()(container)
       .width(size)
       .height(heightForWidth(size))
       .backgroundColor("rgba(0,0,0,0)")
       .showAtmosphere(true)
-      .atmosphereColor("#246BFD")
-      .atmosphereAltitude(0.17)
+      .atmosphereColor("#719BC1")
+      .atmosphereAltitude(0.1)
       .polygonsData(countries.features)
       .polygonAltitude(0.006)
       .polygonCapColor((feature) => {
         const country = feature.properties?.ADMIN;
-        if (country === "China" || country === "Indonesia") return "#E9784E";
-        const palette = ["#7FA98A", "#A8B98D", "#C2B78C", "#75A1A2"];
+        if (country === "China" || country === "Indonesia") return "#C68A44";
+        const palette = ["#728D9E", "#819AA8", "#93A9B2", "#698596"];
         const code = feature.properties?.ISO_A3 ?? country ?? "land";
         return palette[[...code].reduce((sum, char) => sum + char.charCodeAt(0), 0) % palette.length];
       })
       .polygonSideColor(() => "rgba(29,83,100,0.12)")
-      .polygonStrokeColor(() => "rgba(236,246,239,0.56)")
+      .polygonStrokeColor(() => "rgba(231,239,241,0.5)")
       .polygonLabel((feature) => {
         const country = feature.properties?.ADMIN;
         if (country !== "China" && country !== "Indonesia") return "";
@@ -156,41 +176,48 @@ const initTravelGlobe = async (container) => {
         return label;
       });
 
-    world.globeMaterial().color.set("#187BB2");
-    world.globeMaterial().emissive.set("#0E5A88");
-    world.globeMaterial().emissiveIntensity = 0.2;
-    world.globeMaterial().shininess = 18;
+    world.globeMaterial().color.set("#24445D");
+    world.globeMaterial().emissive.set("#172C43");
+    world.globeMaterial().emissiveIntensity = 0.3;
+    world.globeMaterial().shininess = 5;
     world.pointOfView({ lat: 24, lng: 110, altitude: 1.92 }, 0);
 
     const controls = world.controls();
     controls.enablePan = false;
     controls.minDistance = 180;
     controls.maxDistance = 430;
-    controls.autoRotate = !reducedMotion;
-    controls.autoRotateSpeed = 0.32;
-    let resumeTimer;
-    controls.addEventListener("start", () => {
-      controls.autoRotate = false;
-      window.clearTimeout(resumeTimer);
-    });
-    controls.addEventListener("end", () => {
-      if (reducedMotion) return;
-      resumeTimer = window.setTimeout(() => { controls.autoRotate = true; }, 3200);
+    controls.autoRotate = false;
+    controls.enableZoom = false;
+    const countryButtons = [...document.querySelectorAll("[data-globe-country]")];
+    const clearCountrySelection = () => countryButtons.forEach((button) => button.setAttribute("aria-pressed", "false"));
+    controls.addEventListener("start", clearCountrySelection);
+    countryButtons.forEach((button) => {
+      button.disabled = false;
+      button.setAttribute("aria-pressed", "false");
+      button.addEventListener("click", () => {
+        const place = VISITED_COUNTRIES.find((country) => country.country === button.dataset.globeCountry);
+        if (!place) return;
+        clearCountrySelection();
+        button.setAttribute("aria-pressed", "true");
+        world.pointOfView({ lat: place.lat, lng: place.lng, altitude: 1.92 }, reducedMotion ? 0 : 650);
+      });
     });
 
     container.addEventListener("keydown", (event) => {
       const delta = event.key === "ArrowLeft" ? -8 : event.key === "ArrowRight" ? 8 : 0;
       if (!delta) return;
       event.preventDefault();
+      clearCountrySelection();
       const view = world.pointOfView();
       world.pointOfView({ ...view, lng: view.lng + delta }, reducedMotion ? 0 : 260);
     });
 
     const resize = () => {
+      if (!stage?.clientWidth) return;
       const next = measureWidth();
       world.width(next).height(heightForWidth(next));
     };
-    new ResizeObserver(resize).observe(panel ?? container);
+    new ResizeObserver(resize).observe(stage ?? container);
     stage?.classList.add("is-ready");
   } catch (error) {
     console.warn("Travel globe unavailable", error);
@@ -236,7 +263,7 @@ const initChinaMap = async (svgElement) => {
     const svg = d3.select(svgElement);
     const projection = d3.geoMercator().fitExtent([[38, 32], [682, 590]], china);
     const path = d3.geoPath(projection);
-    const priorityLabels = new Set(["北京", "上海", "西安", "长沙", "深圳", "香港", "澳门", "昆明", "三亚"]);
+    const priorityLabels = new Set(["北京", "上海", "西安", "长沙", "深圳", "昆明"]);
 
     svg.append("g")
       .attr("class", "china-provinces")
@@ -254,9 +281,11 @@ const initChinaMap = async (svgElement) => {
       .attr("class", (place) => `china-destination china-destination--${place.accent}`)
       .attr("transform", (place) => `translate(${projection([place.lng, place.lat]).join(",")})`)
       .attr("tabindex", 0)
-      .attr("role", "img")
+      .attr("role", "button")
+      .attr("aria-pressed", "false")
       .attr("aria-label", (place) => `${place.region}，${place.name}`);
 
+    nodes.append("circle").attr("class", "destination-hit").attr("r", 13);
     nodes.append("circle").attr("r", (place) => place.accent === "home" ? 6.5 : 4.5);
     nodes.filter((place) => priorityLabels.has(place.name))
       .append("text")
@@ -264,19 +293,49 @@ const initChinaMap = async (svgElement) => {
       .attr("y", -8)
       .text((place) => place.name);
 
+    const destinationSelect = document.querySelector("#destination-select");
+    const destinationDetail = document.querySelector("#destination-detail");
+    const selectDestination = (place) => {
+      if (tooltip) tooltip.hidden = true;
+      nodes.classed("is-selected", (point) => point.name === place.name)
+        .attr("aria-pressed", (point) => String(point.name === place.name));
+      if (destinationSelect) destinationSelect.value = place.name;
+      if (destinationDetail) destinationDetail.textContent = `${place.name} · ${place.region} / ${place.lat.toFixed(2)}°N, ${place.lng.toFixed(2)}°E`;
+    };
+    if (destinationSelect) {
+      destinationSelect.replaceChildren(...CHINA_DESTINATIONS.map((place) => new Option(`${place.name} · ${place.region}`, place.name)));
+      destinationSelect.disabled = false;
+      destinationSelect.addEventListener("change", () => {
+        const place = CHINA_DESTINATIONS.find((point) => point.name === destinationSelect.value);
+        if (place) selectDestination(place);
+      });
+      selectDestination(CHINA_DESTINATIONS.find((place) => place.name === "深圳"));
+    }
     const showTooltip = (event, place) => {
       if (!tooltip) return;
       const [x, y] = projection([place.lng, place.lat]);
       tooltip.innerHTML = `<strong>${place.name}</strong><span>${place.region}</span>`;
       tooltip.hidden = false;
-      tooltip.style.left = `${Math.min(82, Math.max(8, (x / 720) * 100))}%`;
-      tooltip.style.top = `${Math.min(86, Math.max(8, (y / 620) * 100))}%`;
+      const mapBounds = svgElement.getBoundingClientRect();
+      const stageBounds = stage.getBoundingClientRect();
+      const left = mapBounds.left - stageBounds.left + (x / 720) * mapBounds.width;
+      const top = mapBounds.top - stageBounds.top + (y / 620) * mapBounds.height;
+      const halfWidth = tooltip.offsetWidth / 2;
+      tooltip.style.left = `${Math.min(stageBounds.width - halfWidth, Math.max(halfWidth, left))}px`;
+      tooltip.style.top = `${Math.max(tooltip.offsetHeight * 1.15, top)}px`;
     };
     const hideTooltip = () => { if (tooltip) tooltip.hidden = true; };
     nodes
       .on("mouseenter focus", showTooltip)
       .on("mouseleave blur", hideTooltip)
-      .on("click", showTooltip);
+      .on("click", (event, place) => { selectDestination(place); showTooltip(event, place); })
+      .on("keydown", (event, place) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          selectDestination(place);
+        }
+        if (event.key === "Escape") hideTooltip();
+      });
 
     stage?.classList.add("is-ready");
   } catch (error) {

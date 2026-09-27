@@ -9,10 +9,10 @@
     <meta property="og:description" content="往前走，别回头。一个关于学习、工作、阅读与远行的持续索引。">
     <meta property="og:type" content="website">
     <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="styles.css?v=20260927-3">
+    <link rel="stylesheet" href="styles.css?v=20260927-4">
     <script src="https://cdn.jsdelivr.net/npm/globe.gl@2.46.1/dist/globe.gl.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js" defer></script>
-    <script src="script.js?v=20260927" defer></script>
+    <script src="script.js?v=20260927-4" defer></script>
   </head>
   <body data-active-section="top">
     <a class="skip-link" href="#main">跳到正文</a>
@@ -207,31 +207,53 @@
           </header>
 
           <div class="travel__meta">
-            <strong>28 destinations</strong>
-            <span>China · Hong Kong · Macau · Indonesia</span>
+            <p class="travel__intro">从熟悉的城市，到更远的世界。<br>把走过的地方，慢慢连成自己的地图。</p>
+            <dl class="travel-stats" aria-label="旅行足迹统计">
+              <div><dt>旅途坐标</dt><dd aria-label="28 destinations">28<span>destinations</span></dd></div>
+              <div><dt>走过的国家</dt><dd>02<span>countries</span></dd></div>
+            </dl>
           </div>
 
           <div class="travel-atlas" id="globe-description">
-            <article class="travel-atlas__panel travel-atlas__world">
-              <header class="atlas-panel__heading"><span>01 · WORLD</span><h3>从世界看，走过两国。</h3></header>
+            <div class="atlas-toolbar">
+              <span class="atlas-wordmark">MY LITTLE ATLAS<span>一张地图，慢慢展开</span></span>
+              <div class="atlas-tabs" role="tablist" aria-label="探索地图的不同尺度">
+                <button type="button" id="atlas-tab-world" role="tab" aria-controls="atlas-world" aria-selected="true" data-atlas-target="world">世界</button>
+                <span aria-hidden="true">→</span>
+                <button type="button" id="atlas-tab-china" role="tab" aria-controls="atlas-china" aria-selected="false" tabindex="-1" data-atlas-target="china">中国足迹</button>
+              </div>
+            </div>
+            <article class="travel-atlas__panel travel-atlas__world" id="atlas-world" role="tabpanel" aria-labelledby="atlas-tab-world">
+              <header class="atlas-panel__heading"><span>ZOOM 01 / WORLD</span><h3>世界很大，<br>继续出发。</h3><p>从中国到印度尼西亚，<br>好奇心带我走向更远的地方。</p></header>
               <div class="globe-stage">
-                <div class="globe-orbit" aria-hidden="true"></div>
-                <div id="travel-globe" role="application" tabindex="0" aria-label="可旋转的世界地球仪，高亮中国与印度尼西亚"></div>
+                <div id="travel-globe" role="application" tabindex="0" aria-label="可旋转的世界地球仪，高亮中国与印度尼西亚" aria-describedby="globe-hint"></div>
                 <p class="globe-status" role="status">正在点亮走过的国家…</p>
               </div>
-              <p class="atlas-panel__note"><span>DRAG TO ROTATE</span> 中国 · 印度尼西亚</p>
+              <div class="atlas-panel__actions">
+                <div class="globe-controls" aria-label="地球视角">
+                  <button type="button" data-globe-country="China" disabled>中国 <span aria-hidden="true">↗</span></button>
+                  <button type="button" data-globe-country="Indonesia" disabled>印度尼西亚 <span aria-hidden="true">↗</span></button>
+                </div>
+                <button class="atlas-explore" type="button" data-atlas-enter>走近中国 <span aria-hidden="true">→</span></button>
+              </div>
+              <p class="atlas-panel__note" id="globe-hint">拖动地球，或使用左右方向键探索<span>02 COUNTRIES</span></p>
             </article>
-            <article class="travel-atlas__panel travel-atlas__china">
-              <header class="atlas-panel__heading"><span>02 · CHINA</span><h3>抵达中国具体的地方</h3></header>
+            <article class="travel-atlas__panel travel-atlas__china" id="atlas-china" role="tabpanel" aria-labelledby="atlas-tab-china" hidden>
+              <header class="atlas-panel__heading"><span>ZOOM 02 / CHINA</span><h3>抵达中国具体的地方</h3><p>27 个坐标，藏着各自的风景。<br>选一站，看看我走过的地方。</p></header>
               <div class="china-map-stage">
-                <svg id="china-map" viewBox="0 0 720 620" role="img" aria-labelledby="china-map-title china-map-description">
+                <svg id="china-map" viewBox="0 0 720 620" role="group" aria-labelledby="china-map-title china-map-description">
                   <title id="china-map-title">中国旅行目的地地图</title>
                   <desc id="china-map-description">以真实省级边界展示二十七个中国境内到访地点。</desc>
                 </svg>
                 <p class="china-map-status" role="status">正在展开中国地图…</p>
                 <div class="china-map-tooltip" hidden></div>
               </div>
-              <p class="atlas-panel__note"><span>27 STOPS</span> 悬停或聚焦标点查看地点</p>
+              <div class="destination-picker">
+                <label for="destination-select">选择目的地</label>
+                <select id="destination-select" disabled><option value="">正在载入足迹…</option></select>
+                <output id="destination-detail" for="destination-select" aria-live="polite">选择一站，查看它的坐标。</output>
+              </div>
+              <p class="atlas-panel__note"><span class="map-legend"><i aria-hidden="true"></i>到访过的地方</span><span class="map-legend map-legend--home"><i aria-hidden="true"></i>学习与生活</span></p>
             </article>
           </div>
         </div>

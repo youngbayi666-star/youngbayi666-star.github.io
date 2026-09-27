@@ -103,6 +103,7 @@ const initTravelGlobe = async (container) => {
   const region = document.querySelector('[data-stop-region]');
   const coordinates = document.querySelector('[data-stop-coordinates]');
   const directory = document.querySelector('[data-travel-directory]');
+  const siteBlue = getComputedStyle(document.documentElement).getPropertyValue('--forward-blue').trim();
   let selected = -1;
   let world;
 
@@ -121,7 +122,7 @@ const initTravelGlobe = async (container) => {
     if (!world) return;
     world.htmlElementsData([place]);
     world.pointRadius(point => point.name === place.name ? .36 : .13);
-    world.pointColor(point => point.name === place.name ? '#E6B971' : '#D6AA65');
+    world.pointColor(point => point.name === place.name ? '#FFFFFF' : '#D9E5FF');
     world.pointOfView({ lat: place.lat, lng: place.lng, altitude: place.accent === 'abroad' ? 1.2 : .9 }, reducedMotion ? 0 : 1100);
   };
   const resetWorld = () => {
@@ -133,7 +134,7 @@ const initTravelGlobe = async (container) => {
     delete container.dataset.selectedStop;
     syncButtons();
     if (!world) return;
-    world.htmlElementsData(VISITED_COUNTRIES).pointRadius(.16).pointColor(() => '#D6AA65');
+    world.htmlElementsData(VISITED_COUNTRIES).pointRadius(.16).pointColor(() => '#D9E5FF');
     world.pointOfView({ lat: 24, lng: 108, altitude: stage.clientWidth > 700 ? 1.75 : 2.05 }, reducedMotion ? 0 : 1000);
   };
   TRAVEL_STOPS.forEach((place, index) => {
@@ -175,13 +176,13 @@ const initTravelGlobe = async (container) => {
       .backgroundColor('rgba(0,0,0,0)').showAtmosphere(false)
       .polygonsData(countries.features)
       .polygonAltitude(.003)
-      .polygonCapColor(feature => ['China', 'Indonesia'].includes(feature.properties?.ADMIN) ? '#3E6899' : '#A7B9BF')
-      .polygonSideColor(() => '#A7B9BF')
-      .polygonStrokeColor(() => 'rgba(242,241,234,.65)')
+      .polygonCapColor(feature => ['China', 'Indonesia'].includes(feature.properties?.ADMIN) ? siteBlue : '#BAC8D5')
+      .polygonSideColor(() => '#BAC8D5')
+      .polygonStrokeColor(() => 'rgba(250,251,252,.7)')
       .polygonsTransitionDuration(0)
       .pointsData(TRAVEL_STOPS)
       .pointLat('lat').pointLng('lng').pointAltitude(.008).pointRadius(.16)
-      .pointColor(() => '#D6AA65').pointsTransitionDuration(0)
+      .pointColor(() => '#D9E5FF').pointsTransitionDuration(0)
       .pointLabel(place => place.name)
       .onPointClick(place => selectStop(TRAVEL_STOPS.indexOf(place)))
       .htmlElementsData(VISITED_COUNTRIES)
@@ -203,8 +204,8 @@ const initTravelGlobe = async (container) => {
         return label;
       })
       .onZoom(view => { container.dataset.camera = `${view.lat.toFixed(3)},${view.lng.toFixed(3)},${view.altitude.toFixed(3)}`; });
-    world.globeMaterial().color.set('#D5E0DF');
-    world.globeMaterial().emissive.set('#D5E0DF');
+    world.globeMaterial().color.set('#E4EBF2');
+    world.globeMaterial().emissive.set('#E4EBF2');
     world.globeMaterial().emissiveIntensity = .25;
     world.globeMaterial().shininess = 0;
     const controls = world.controls();
